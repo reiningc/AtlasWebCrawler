@@ -32,7 +32,7 @@ callBackendAPI = async () => {
         <br/>
           <p className="App-intro">{this.state.data}</p>
         <br/>
-        <form>
+        <form action="/express_backend" method="post">
         <div class="form-group"> 
         <label for="website">Starting address for crawl:</label>
         <br/>
