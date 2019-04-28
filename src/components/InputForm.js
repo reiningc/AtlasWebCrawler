@@ -29,14 +29,17 @@ class InputForm extends Component {
       <div>
         {/* input form */}
         <form action="/express_backend" method="post" className="container">
-
+                <br/>
+                <h5 className="App-intro">{this.state.data}</h5>
+                <br/>
             {/* starting address */}
             <div className="form-group row">
+                
                 <div className="col-sm">
                     <label for="website">Starting address for crawl:</label>
                 </div>
                 <div className="col-sm">
-                    <input type="url" className="form-control" class="col-xs-4" id="website"/>
+                    <input type="url" className="form-control" class="col-xs-4" name="website" id="website"/>
                 </div>
             </div>
 
@@ -48,14 +51,14 @@ class InputForm extends Component {
                     </div>
                     <div className="col-md">
                         <input type="radio" name="optradio" style={{marginRight: "25px"}} checked/> 
-                        <label class=""> Breadth First Search</label>
+                        <label class="radio-inline"> Breadth First Search</label>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md"></div>
                     <div className="col-md">
                         <input type="radio" name="optradio" style={{marginRight: "36px"}} /> 
-                        <label class=""> Depth First Search</label>
+                        <label class="radio-inline"> Depth First Search</label>
                     </div>
                 </div>
             </div>
@@ -66,7 +69,7 @@ class InputForm extends Component {
                     <label for="depth">Select Maximum Number of Links to Follow: </label>
                 </div>
                 <div className="col-sm">
-                    <input type="number" class="col-xs-4" id="depth" min="0" />
+                    <input type="number" class="col-xs-4" id="depth" min="0" name="linkNum"/>
                 </div>
             </div>
 
@@ -76,7 +79,7 @@ class InputForm extends Component {
                     <label for="safeword">Enter a word that when encountered will stop crawl:</label>
                 </div>
                 <div class="col-sm">
-                    <input type="text" class="col-xs-4" id="safeword" />
+                    <input type="text" class="col-xs-4" id="safeword" name="keyword"/>
                 </div>
             </div>
 
