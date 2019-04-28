@@ -11,23 +11,26 @@ def request_website(URL):
     # Parses seed into 6-item named tuple: (scheme, netloc, path, params, query, fragment)
     parsedURL = urllib.parse.urlparse(URL)
 
-    # Builds robots.txt URL
-    robotsURL = parsedURL.scheme + '://' + parsedURL.netloc + '/robots.txt' # URL for SEED's robots.txt
+    # Builds robots.txt URL and regular URL if no scheme (http/https) provided
+    request_URL = URL
+    if not len(parsedURL.scheme):
+        request_URL = 'http://' + request_URL # Assume http if no scheme
+    robots_URL = request_URL + '/robots.txt' # URL for SEED's robots.txt
 
     # Load robotsURL into robot file parser to later check if fetching page is allowable
     rp = urllib.robotparser.RobotFileParser()
-    rp.set_url(robotsURL)
+    rp.set_url(robots_URL)
     rp.read()
 
     links = set()
     # If robots.txt allows for fetching page, request the page
-    if (rp.can_fetch('*', URL)):
+    if (rp.can_fetch('*', request_URL)):
         # try opening URL, post errors to log file if not successful
         try:
-            response = urllib.request.urlopen(URL)
+            response = urllib.request.urlopen(request_URL)
         except urllib.error.URLError as err:
             error_logfile = open('logs/error.log', 'a')
-            error_message = URL + ' - '
+            error_message = request_URL + ' - '
             # add to error message depending on error type. check first for a HTTP error (if it has a code, its a HTTP error), otherwise it is an URL error
             if hasattr(err, 'code'):
                 error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason + '\n'
@@ -42,7 +45,7 @@ def request_website(URL):
             html = response.read().decode('utf-8')
 
             # collect links from html webpage
-            links = parseHTML.get_all_links(html, URL)
+            links = parseHTML.get_all_links(html, request_URL)
     else:
         raise ValueError('robots.txt prevents fetching requested page')
     
