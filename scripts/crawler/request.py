@@ -5,6 +5,7 @@ from . import parseHTML
 import urllib.request
 import urllib.parse
 import urllib.robotparser
+import urllib.error
 
 def request_website(URL):
     # Parses seed into 6-item named tuple: (scheme, netloc, path, params, query, fragment)
@@ -21,15 +22,28 @@ def request_website(URL):
     links = set()
     # If robots.txt allows for fetching page, request the page
     if (rp.can_fetch('*', URL)):
-        with urllib.request.urlopen(URL) as response:
+        # try opening URL, post errors to log file if not successful
+        try:
+            response = urllib.request.urlopen(URL)
+        except urllib.error.URLError as err:
+            error_logfile = open('logs/error.log', 'a')
+            error_message = URL + ' - '
+            # add to error message depending on error type. check first for a HTTP error (if it has a code, its a HTTP error), otherwise it is an URL error
+            if hasattr(err, 'code'):
+                error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason
+            elif hasattr(err, 'reason'):
+                error_message += 'Server could not fill the request. Reason: ' + err.reason
+
+            error_logfile.write(error_message)
+            error_logfile.close()
+        else:
+            # opening URL was successful
             # read response from server - this comes in as bytes object and has to be decoded into utf-8
             html = response.read().decode('utf-8')
-            print(html)
+
             # collect links from html webpage
             links = parseHTML.get_all_links(html, URL)
-            print(links)
-
     else:
-        raise ValueError('Cannot fetch requested page')
+        raise ValueError('robots.txt prevents fetching requested page')
     
     return links
