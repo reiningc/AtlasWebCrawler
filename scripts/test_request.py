@@ -17,6 +17,8 @@ class Test(unittest.TestCase):
     def test_robots_prevents_request(self):
         self.assertRaises(ValueError, crawler.request.request_website,'http://google.com')
 
-#    def test_bad_URL(self):
-#        self.assertRaises(ValueError,crawler.request.request_website,'http://python.org/badURL')
+    def test_no_scheme_in_URL(self):
+        result = crawler.request.request_website('example.com')
+        self.assertSetEqual(result, {'http://www.iana.org/domains/example'})
+
 unittest.main(verbosity=2)
