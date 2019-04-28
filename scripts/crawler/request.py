@@ -30,9 +30,9 @@ def request_website(URL):
             error_message = URL + ' - '
             # add to error message depending on error type. check first for a HTTP error (if it has a code, its a HTTP error), otherwise it is an URL error
             if hasattr(err, 'code'):
-                error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason
+                error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason + '\n'
             elif hasattr(err, 'reason'):
-                error_message += 'Server could not fill the request. Reason: ' + err.reason
+                error_message += 'Server could not fill the request. Reason: ' + err.reason + '\n'
 
             error_logfile.write(error_message)
             error_logfile.close()
