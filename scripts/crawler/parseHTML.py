@@ -1,5 +1,18 @@
 #! python3
 
+
+def get_page_title(webpage):
+    start_of_title_index = webpage.find('<title>') + 7   # +7 chars to offset length of <title>
+
+    # if find returns -1, then <title> has not been found in webpage
+    if start_of_title_index < 0:
+        raise ValueError('No title tags in webpage')
+    
+    end_of_title_index = webpage.find('<',start_of_title_index)
+
+    return webpage[start_of_title_index:end_of_title_index]
+
+
 # get_all_links takes in an HTML webpage and returns
 # the set of unique links on that webpage
 def get_all_links(webpage, URL):
