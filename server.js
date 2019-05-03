@@ -6,10 +6,19 @@ const app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
 const port = process.env.PORT || 5000;
 
 // create a GET route
 app.get('/express_backend', (req, res) => {
+  console.log('Cookies: ', req.cookies);
+  let options = {
+    maxAge: 1000 * 60 * 15, // would expire after 15 minutes
+    httpOnly: true, // The cookie only accessible by the web server
+    signed: true // Indicates if the cookie should be signed
+  }
+  res.cookie('cookieName', 'cookieValue', options);
   res.send({ express: 'YOUR EXPRESS BACKEND IS CONNECTED TO REACT' });
 });
 
