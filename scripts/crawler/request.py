@@ -7,14 +7,22 @@ import urllib.parse
 import urllib.robotparser
 import urllib.error
 
-def request_website(URL):
+def prepare_URL_for_crawl(URL):
     # Parses seed into 6-item named tuple: (scheme, netloc, path, params, query, fragment)
     parsedURL = urllib.parse.urlparse(URL)
 
-    # Builds robots.txt URL and regular URL if no scheme (http/https) provided
+    # Builds URL if no scheme (http/https) provided
     request_URL = URL
     if not len(parsedURL.scheme):
         request_URL = 'http://' + request_URL # Assume http if no scheme
+    
+    return request_URL
+
+def request_website(URL):
+    html = ''
+
+    # Builds robots.txt URL
+    request_URL = URL
     robots_URL = request_URL + '/robots.txt' # URL for SEED's robots.txt
 
     # Load robotsURL into robot file parser to later check if fetching page is allowable
@@ -22,7 +30,6 @@ def request_website(URL):
     rp.set_url(robots_URL)
     rp.read()
 
-    links = set()
     # If robots.txt allows for fetching page, request the page
     if (rp.can_fetch('*', request_URL)):
         # try opening URL, post errors to log file if not successful
@@ -42,11 +49,9 @@ def request_website(URL):
         else:
             # opening URL was successful
             # read response from server - this comes in as bytes object and has to be decoded into utf-8
-            html = response.read().decode('utf-8')
+            html = response.read().decode('utf-8', 'replace')
 
-            # collect links from html webpage
-            links = parseHTML.get_all_links(html, request_URL)
     else:
         raise ValueError('robots.txt prevents fetching requested page')
     
-    return links
+    return html
