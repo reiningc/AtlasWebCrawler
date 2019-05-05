@@ -38,5 +38,10 @@ class Test(unittest.TestCase):
         result = crawler.parseHTML.format_relative_URL(relative_URL,origin_URL)
         self.assertEqual(result,'http://www.iana.org/gobs/html/')
     
+    def test_parse_base_URL_http(self):
+        URL = 'http://www.iana.org/gobs/dobz/rfc2606'
+        result = crawler.parseHTML.parse_base_URL(URL)
+        self.assertEqual(result, 'http://www.iana.org')
+    
 
 unittest.main(verbosity=2)
