@@ -38,6 +38,18 @@ class Test(unittest.TestCase):
         result = crawler.parseHTML.format_relative_URL(relative_URL,origin_URL)
         self.assertEqual(result,'http://www.iana.org/gobs/html/')
     
+    def test_relative_URL_no_dots(self):
+        origin_URL = 'http://docs.python.org/3/library/decimal.html#decimal.Decimal'
+        relative_URL = 'functions.html#int'
+        result = crawler.parseHTML.format_relative_URL(relative_URL, origin_URL)
+        self.assertEqual(result, 'http://docs.python.org/3/library/functions.html#int')
+
+    def test_relative_URL_forward_slash_start(self):
+        origin_URL = 'https://library.oregonstate.edu/floormaps/second-floor'
+        relative_URL = '/floormaps/newspapers'
+        result = crawler.parseHTML.format_relative_URL(relative_URL,origin_URL)
+        self.assertEqual(result,'https://library.oregonstate.edu/floormaps/newspapers')
+    
     def test_parse_base_URL_http(self):
         URL = 'http://www.iana.org/gobs/dobz/rfc2606'
         result = crawler.parseHTML.parse_base_URL(URL)
