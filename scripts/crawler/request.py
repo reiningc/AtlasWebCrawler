@@ -7,51 +7,76 @@ import urllib.parse
 import urllib.robotparser
 import urllib.error
 
+ERROR_LOG_FILENAME = 'logs/error.log'
+
+def log_error_to_file(message,filename):
+    error_logfile = open(filename,'a')
+    error_logfile.write(message)
+    error_logfile.close()
+
+
 def prepare_URL_for_crawl(URL):
     # Parses seed into 6-item named tuple: (scheme, netloc, path, params, query, fragment)
-    parsedURL = urllib.parse.urlparse(URL)
+    parsed_URL = urllib.parse.urlparse(URL)
 
     # Builds URL if no scheme (http/https) provided
     request_URL = URL
-    if not len(parsedURL.scheme):
+    if len(parsed_URL.scheme) == 0 and not URL.startswith('//'):
         request_URL = 'http://' + request_URL # Assume http if no scheme
     
     return request_URL
 
+def generate_robots_URL(URL):
+    parsed_URL = urllib.parse.urlparse(URL)
+
+    robots_URL = URL
+    if len(parsed_URL.scheme) == 0:
+            robots_URL = 'http://' + parsed_URL.netloc
+    
+    return robots_URL + '/robots.txt'
+
 def request_website(URL):
     html = ''
-
-    # Builds robots.txt URL
     request_URL = URL
-    robots_URL = request_URL + '/robots.txt' # URL for SEED's robots.txt
+    # Builds robots.txt URL
+    robots_URL = generate_robots_URL(request_URL) # URL for website's robots.txt
 
     # Load robotsURL into robot file parser to later check if fetching page is allowable
     rp = urllib.robotparser.RobotFileParser()
     rp.set_url(robots_URL)
-    rp.read()
-
+    try:
+        rp.read()
+    except Exception:
+        return -1, 1
+        
+    crawl_delay = 1
+    
     # If robots.txt allows for fetching page, request the page
     if (rp.can_fetch('*', request_URL)):
+        # check robots.txt for crawl delay request to slow down crawler
+        if rp.crawl_delay('*'):
+            crawl_delay = max(crawl_delay,rp.crawl_delay('*'))
+
         # try opening URL, post errors to log file if not successful
         try:
             response = urllib.request.urlopen(request_URL)
         except urllib.error.URLError as err:
-            error_logfile = open('logs/error.log', 'a')
             error_message = request_URL + ' - '
             # add to error message depending on error type. check first for a HTTP error (if it has a code, its a HTTP error), otherwise it is an URL error
             if hasattr(err, 'code'):
                 error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason + '\n'
             elif hasattr(err, 'reason'):
                 error_message += 'Server could not fill the request. Reason: ' + err.reason + '\n'
-
-            error_logfile.write(error_message)
-            error_logfile.close()
+            log_error_to_file(error_message,ERROR_LOG_FILENAME)
+            return -1, 1
         else:
             # opening URL was successful
             # read response from server - this comes in as bytes object and has to be decoded into utf-8
             html = response.read().decode('utf-8', 'replace')
 
     else:
-        raise ValueError('robots.txt prevents fetching requested page')
-    
-    return html
+        error_message = request_URL + ' - robots.txt prevents fetching requested page'
+        log_error_to_file(error_message, ERROR_LOG_FILENAME)
+        return -1, 1
+
+    return html, crawl_delay
