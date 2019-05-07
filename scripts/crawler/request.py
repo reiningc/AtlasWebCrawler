@@ -23,6 +23,8 @@ def prepare_URL_for_crawl(URL):
     request_URL = URL
     if len(parsed_URL.scheme) == 0 and not URL.startswith('//'):
         request_URL = 'http://' + request_URL # Assume http if no scheme
+    elif URL.startswith('//'):
+        request_URL = 'http:' + request_URL
     
     return request_URL
 
@@ -48,14 +50,18 @@ def request_website(URL):
         rp.read()
     except Exception:
         return -1, 1
-        
+
     crawl_delay = 1
     
     # If robots.txt allows for fetching page, request the page
     if (rp.can_fetch('*', request_URL)):
         # check robots.txt for crawl delay request to slow down crawler
-        if rp.crawl_delay('*'):
+        # using try/except as workaround for robotparser crawl_delay returning with Attribute Error instead
+        # of None when no crawl delay is in the robots.txt file
+        try:
             crawl_delay = max(crawl_delay,rp.crawl_delay('*'))
+        except Exception:
+            pass
 
         # try opening URL, post errors to log file if not successful
         try:
@@ -75,7 +81,7 @@ def request_website(URL):
             html = response.read().decode('utf-8', 'replace')
 
     else:
-        error_message = request_URL + ' - robots.txt prevents fetching requested page'
+        error_message = request_URL + ' - robots.txt prevents fetching requested page\n'
         log_error_to_file(error_message, ERROR_LOG_FILENAME)
         return -1, 1
 
