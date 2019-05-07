@@ -101,66 +101,83 @@ def format_relative_URL(relative_URL, origin_URL):
     #print('FINAL formatted_relative_URL:',formatted_relative_URL)
     return formatted_relative_URL
 
-
-# get_all_links takes in an HTML webpage and returns
-# the set of unique links on that webpage
-def get_all_links(webpage, URL, visited_URLs):
-    base_URL = parse_base_URL(URL)
-    soup = BeautifulSoup(webpage,'html.parser')
+def has_ignorable_beginning_or_ending(link_URL):
     ignore_endings = {'.css', '.js', '.png', '.jpg', '.txt','rss/','rss','.ico','.bmp','.jpeg', \
         '.zip','.7z','.doc', '.asx','.docx','.flv','.gif','.mid','.ppt','.mov','.mp3','.ogg','.pdf', \
         '.ra','.ram','.rm','.swf','.wav','.wma','.wmv','.xml','.m4a','.mp4','.m4b','javascript:;',\
         '.javascript','.javascript:','/db','.tgz','/print'}
     ignore_beginnings = {'exmail.','email','gmail','mail','mailto','fonts.googleapis.com','tel:','ftp:',\
         'javascript:','javascript:;','search.'}
+    
+    # parse link to check ending against set of ignorable link endings
+    parsed_link = urllib.parse.urlparse(link_URL)
+    parsed_link_ending_start_index = parsed_link.path.rfind('/')
+    parsed_link_ending_end_index = len(parsed_link.path)
+    parsed_link_ending = parsed_link.path[parsed_link_ending_start_index:parsed_link_ending_end_index]
+
+    # if a link ends with one of the ignore_endings, or just has it in the ending (ex: ../style.css?mvmir), it is ignorable
+    for ending in ignore_endings:
+        if link_URL.endswith(ending) or parsed_link_ending.endswith(ending):
+            return True
+
+    # if a link starts with one of the ignore_beginnings, it is ignorable
+    for beginning in ignore_beginnings:
+        if link_URL.startswith(beginning) or parsed_link.netloc.startswith(beginning):
+            return True
+    
+    return False
+
+# get_all_links takes in an HTML webpage and returns
+# the set of unique links on that webpage
+def get_all_links(webpage, URL, visited_URLs):
+    base_URL = parse_base_URL(URL)
+    soup = BeautifulSoup(webpage,'html.parser')
+
     unique_links = set()
     relative_links = set()
-    is_ignorable_link = False
+    
 
     # find all hrefs
     for link in soup.find_all('a'):
         link_URL = link.get('href')
+        is_ignorable_link = False
 
         # links can be ignored if:
-        # if a link is empty
+        # if a link is empty - *check for Nonetypes to prevent errors in the following conditionals*
         # if a link starts with #, its for a subsection on the same webpage
+        # if a link is for an ignorable type (email, documents, etc)
         # if a link just links back to itself
         if link_URL == None or link_URL == '' or link_URL.startswith('#') \
             or link_URL == URL:
             is_ignorable_link = True
+        elif has_ignorable_beginning_or_ending(link_URL):
+            is_ignorable_link = True
         elif is_relative_link(link.get('class'),link.get('title'),link_URL,link.parent.get('class')) \
             and link_URL not in relative_links:
             relative_links.add(link_URL)
+        # cut off any trailing /'s in link
+        elif link_URL[len(link_URL)-1] == '/':
+            link_URL = link_URL[:len(link_URL)-1]  
         
         if not is_ignorable_link:
-            # cut off any trailing /'s in link
-            if link_URL[len(link_URL)-1] == '/':
-                link_URL = link_URL[:len(link_URL)-1]    
-                
+            # if a link does start with //, need to prepend http: so the website can be requested by urllib.request
             # if a link doesn't start with http or //, it must be a link to another page
             # on this website. will have to add the URL to the beginning to make it
             # a useable address
             # this should catch http and https
-            if not link_URL.startswith('//') and not link_URL.startswith('http') and not link_URL.startswith('https'):
-                link = base_URL + link_URL
+            if link_URL.startswith('//'):
+                link_URL = 'http:' + link_URL
+            elif not link_URL.startswith('http') and not link_URL.startswith('https'):
+                link_URL = base_URL + link_URL
 
-            # parse link to check ending against set of ignorable link endings
-            parsed_link = urllib.parse.urlparse(link_URL)
-            parsed_link_ending_start_index = parsed_link.path.rfind('/')
-            parsed_link_ending_end_index = len(parsed_link.path)
-            parsed_link_ending = parsed_link.path[parsed_link_ending_start_index:parsed_link_ending_end_index]
-
-            # if a link ends with one of the ignore_endings, or just has it in the ending (ex: ../style.css?mvmir), it is ignorable
-            for ending in ignore_endings:
-                if link_URL.endswith(ending) or parsed_link_ending.endswith(ending):
+            # check for duplicate links with different http/https schemes
+            if link_URL.startswith('http://') \
+                and 'https://' + link_URL[len('http://'):] in visited_URLs:
                     is_ignorable_link = True
-                    break
-
-            # if a link starts with one of the ignore_beginnings, it is ignorable
-            for beginning in ignore_beginnings:
-                if link_URL.startswith(beginning) or parsed_link.netloc.startswith(beginning):
+            elif link_URL.startswith('https://') \
+                and 'http://' + link_URL[len('https://'):] in visited_URLs:
                     is_ignorable_link = True
-                    break
+
 
             # only add links that:
             #   - are not an ignorable link
@@ -174,7 +191,7 @@ def get_all_links(webpage, URL, visited_URLs):
                 unique_links.add(link_URL)
 
         # reset ignorable
-        is_ignorable_link = False
+        #is_ignorable_link = False
 
     # format relative links and to unique links
     for link in relative_links:
