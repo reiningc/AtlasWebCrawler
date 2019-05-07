@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
-import Header from './components/Header'
-import InputForm from './components/InputForm';
-import Footer from './components/Footer';
+import {Router, Route} from 'react-router-dom'
+import HomeScreen from './screens/HomeScreen';
+import Results from './screens/Results';
 
+import history from './history'
 
 class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <Header/> 
-        <InputForm/>
-        <Footer/>
-      </div>
+      <Router history={history}>
+        <div className="App">
+          <Route exact path="/" component={HomeScreen}/>
+          <Route exact path="/results" component={Results} />
+        </div>
+      </Router>
     );
   }
   
