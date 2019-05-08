@@ -54,6 +54,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
             site_html, crawl_delay = crawler.request.request_website(current_URL)
             # if request_website returns -1, it means site was unable to be read
             if site_html == -1:
+                uncrawlable_links.add(current_URL)
                 # Prevent cycles by avoiding visited links
                 if len(site_links) > 1:
                     next_URL_list = random.sample(site_links,k=1)
