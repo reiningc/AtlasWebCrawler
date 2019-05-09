@@ -4,13 +4,22 @@
 # The program will start at the start page, randomly choose one of the links on that page, 
 # then follow it to the next page. Then, at the next page, it randomly chooses a link 
 # from the options available, and follows it. This makes a chain from the starting page. 
-# This continues until the program hits the page limit indicated.
+# This continues until the program hits the requested page limit.
 
 import crawler.request
 import crawler.parseHTML
 import random
 import time
 import json
+import sys
+
+KEYWORD = None
+if len(sys.argv) < 3:
+    raise ValueError('Not enough arguments. Include starting URL and page limit.')
+elif len(sys.argv) == 4:
+    KEYWORD = sys.argv[3]
+START = sys.argv[1]
+LIMIT = int(sys.argv[2])
 
 CRAWL_LOG_FILENAME = 'logs/crawl.log'
 
@@ -22,7 +31,9 @@ def log_crawl_to_file(crawl_data, filename):
 
 def df_crawl(starting_URL, page_limit, keyword=None):
     if page_limit < 1:
-        raise ValueError('Page limit must be 1 or more')
+        error_message = 'Page limit must be at least 1 for depth first crawl.'
+        crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+        return -1
 
     if keyword is not None:
         return df_crawl_with_keyword(starting_URL, page_limit, keyword)
@@ -45,7 +56,9 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         # look for good URL to crawl from list of URLs 
         while current_URL in uncrawlable_links or site_html == -1:
             if starting_URL in uncrawlable_links:
-                raise ValueError('URL unable to be crawled')
+                error_message = 'Depth First Crawl failed. Starting URL: ' + starting_URL +' unable to be crawled.'
+                crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+                return -1
 
             print('PREPARING URL: ', current_URL)
             # add scheme to URL if needed
@@ -113,3 +126,5 @@ def df_crawl(starting_URL, page_limit, keyword=None):
 def df_crawl_with_keyword(starting_URL, page_limit, keyword):
 
     return 0
+
+df_crawl(START,LIMIT,KEYWORD)
