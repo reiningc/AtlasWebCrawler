@@ -1,130 +1,158 @@
 import React, { Component } from 'react'
+import { ForceGraph2D, ForceGraph3D, ForceGraphVR } from 'react-force-graph';
+import {Router, Route, Link} from 'react-router-dom'
+
 
 class Results extends Component {
     constructor(props){
         super(props);
         this.state ={
-            dummydata: 
-                { start: 
-                    {  
-                        title: "Test1", 
-                        keyword: true, 
-                        url: "www.start.com", 
-                        links: [
-                                { 
-                                    title: "google", 
-                                    keyword: false, 
-                                    url: "https://www.google.com", 
-                                    links: [
-                                            { 
-                                                title: "youtube", 
-                                                keyword: true, 
-                                                url: "https://www.youtube.com", 
-                                                links: [
-                                                    { 
-                                                        title: "google", 
-                                                        keyword: false, 
-                                                        url: "https://www.google.com", 
-                                                        links: [
-                                                                { 
-                                                                    title: "youtube", 
-                                                                    keyword: true, 
-                                                                    url: "https://www.youtube.com", 
-                                                                    links: []
-                                                                }
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            { 
-                                                title: "stack overflow", 
-                                                keyword: true, 
-                                                url: "https://www.stackoverflow.com", 
-                                                links: [
-                                                    { 
-                                                        title: "oregon state", 
-                                                        keyword: false, 
-                                                        url: "https://www.oregonstate.com", 
-                                                        links: []
-                                                    }
-                                                ]
-                                            }
-                                    ]
-                                },
-                                { 
-                                    title: "facebook", 
-                                    keyword: false, 
-                                    url: "https://www.facebook.com", 
-                                    links: [
-                                            { 
-                                                title: "espn", 
-                                                keyword: true, 
-                                                url: "https://www.espn.com", 
-                                                links: []
-                                            }
-                                    ]
-                                }
-                        ]
-                    }
-                }
-        }
-    }
+            // data that will be displayed
+            data: {
+                "nodes": [ 
+                    { 
+                      "id": "id1", // used to make the link
+                      "name": "name1", // what will be displayed on node hover
+                    //   "val": 1,  // this will affect node size
+                      "link" : "https://www.google.com", // what it will link to when clicked
+                      "keyword" : "true" // used to determine if the node should be highlighted
 
-    displayObj = (obj) => {
-        
-        if(obj.links.length != 0)
-        {
-            return obj.links.map((test) => (
-                <ul>
-                    <li className="" style={test.keyword ? {color:"red"} : null}>
-                        <div className="border border-primary rounded-circle" 
-                                style={{ width: "200px", height: "200px", 
-                                        overflow: "hidden", whiteSpace: "nowrap", 
-                                        textOverflow: "ellipsis", paddingTop: "4%"
-                                        }}>
-                            <div style={{margin: "0 auto"}}>
-                                {test.title}
-                                <div>
-                                    <a href={test.url}>{test.url}</a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                    },
+                    { 
+                      "id": "id2",
+                      "name": "name2",
+                    //   "val": 10,
+                      "link" : "https://www.youtube.com",
+                      "keyword" : "false" 
+                    },
+                    { 
+                        "id": "id3",
+                        "name": "name3",
+                        // "val": 103,
+                        "link" : "https://www.espn.com",
+                        "keyword": "true" 
+                      },
+                      { 
+                        "id": "id4",
+                        "name": "name4",
+                        // "val": 103,
+                        "link" : "https://www.espn.com",
+                        "keyword": "true" 
+                      },
+                      { 
+                        "id": "id5",
+                        "name": "name5",
+                        // "val": 103,
+                        "link" : "https://www.espn.com",
+                        "keyword": "false" 
+                      },
+                      { 
+                        "id": "id6",
+                        "name": "name6",
+                        // "val": 103,
+                        "link" : "https://www.espn.com",
+                        "keyword": "true" 
+                      },
+                ],
+                "links": [
                     {
-                        this.displayObj(test)
-                    }
-                </ul>
-            ))
+                        "source": "id1",
+                        "target": "id2"
+                    },
+                    {
+                        "source": "id1",
+                        "target": "id3"
+                    },
+                    {
+                        "source": "id3",
+                        "target": "id4"
+                    },
+                    {
+                        "source": "id3",
+                        "target": "id5"
+                    },
+                    {
+                        "source": "id3",
+                        "target": "id6"
+                    },
+                ]
+            }
         }
     }
-  render() {
 
-    let data = <div>
-        <ul>
-            <li>
-                        <div className="border border-primary rounded-circle" 
-                                style={{ width: "200px", height: "200px", 
-                                        overflow: "hidden", whiteSpace: "nowrap", 
-                                        textOverflow: "ellipsis", paddingTop: "4%"
-                                        }}>
-                            <div style={{margin: "0 auto"}}>
-                                <h1>START</h1>
-                                {this.state.dummydata.start.title}
-                                <div>
-                                    <a href={this.state.dummydata.start.url}>{this.state.dummydata.start.url}</a>
-                                </div>
-                            </div>
-                        </div>
-                {
-                    this.displayObj(this.state.dummydata.start)
-                }
-            </li>
-        </ul>
-    </div>
+
+  render() {
     
     return (
       <div>
-        {data}
+        <h1>Crawl Results</h1>
+
+        <div style={{paddingTop: "3%"}}>
+
+        {/* 
+            NPM package to display the results
+            Documentation at: https://github.com/vasturiano/react-force-graph
+        */}
+          <ForceGraph2D
+            graphData={this.state.data}
+            height={500}
+            nodeAutoColorBy="keyword"
+            backgroundColor="grey"
+            showNavInfo="true"
+            onNodeClick={(node) => {window.location.assign(node.link)}}
+            />
+
+        {/* 
+            Legend that tells the user about the graph
+        */}
+
+            <div className="container">
+                <div style={{border: "1px solid black"}}>
+                    <h1>LEGEND</h1>
+                    <div>
+                        <div style={{display: "inline"}}>
+                            <span class="dot" style={{
+                                height: "25px",
+                                width: "25px",
+                                border: "1px solid black",
+                                backgroundColor: "#cce6ff",
+                                borderRadius: "50%",
+                                display: "inline-block",
+                            }}></span>
+                            <h3 style={{display:"inline-block", paddingLeft:"2%"}}>Contain key words</h3>
+
+                            <br></br>
+
+                            <span class="dot" style={{
+                                height: "25px",
+                                width: "25px",
+                                border: "1px solid black",
+                                backgroundColor: "#3399ff",
+                                borderRadius: "50%",
+                                display: "inline-block",
+                            }}></span>
+                            <h3 style={{display:"inline-block", paddingLeft:"2%"}}>Does not contain key words</h3>
+
+                        </div>
+                        <div>
+                            <h3>Note: Double clicking on node will redirect you to website</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br></br>
+
+            {/* Gives user the option to conduct a new crawl */}
+            <div>
+                <Link to='/'>
+                <button >NEW CRAWL
+                </button>
+                
+                </Link>
+
+            </div>
+
+        </div>
       </div>
     )
   }
