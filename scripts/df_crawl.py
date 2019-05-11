@@ -1,4 +1,4 @@
-#! python3
+#!/usr/bin/env python2.7
 
 # Depth-First Crawl:
 # The program will start at the start page, randomly choose one of the links on that page, 
