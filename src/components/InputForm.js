@@ -28,7 +28,7 @@ class InputForm extends Component {
     return (
       <div>
         {/* input form */}
-        <form action="/express_backend" method="post" className="container">
+        <form action="http://localhost:5000" method="post" className="container">
 
             {/* starting address */}
             <div className="form-group row">
@@ -36,7 +36,7 @@ class InputForm extends Component {
                     <label for="website">Starting address for crawl:</label>
                 </div>
                 <div className="col-sm">
-                    <input type="url" className="form-control" class="col-xs-4" id="website"/>
+                    <input type="url" className="form-control" class="col-xs-4" name="website"/>
                 </div>
             </div>
 
@@ -66,7 +66,7 @@ class InputForm extends Component {
                     <label for="depth">Select Maximum Number of Links to Follow: </label>
                 </div>
                 <div className="col-sm">
-                    <input type="number" class="col-xs-4" id="depth" min="0" />
+                    <input type="number" class="col-xs-4" name="depth" min="0" />
                 </div>
             </div>
 
@@ -76,7 +76,7 @@ class InputForm extends Component {
                     <label for="safeword">Enter a word that when encountered will stop crawl:</label>
                 </div>
                 <div class="col-sm">
-                    <input type="text" class="col-xs-4" id="safeword" />
+                    <input type="text" class="col-xs-4" name="keyword" />
                 </div>
             </div>
 
