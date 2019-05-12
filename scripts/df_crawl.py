@@ -12,6 +12,7 @@ import random
 import time
 import json
 import sys
+import os.path
 
 KEYWORD = None
 if len(sys.argv) < 3:
@@ -21,11 +22,21 @@ elif len(sys.argv) == 4:
 START = sys.argv[1]
 LIMIT = int(sys.argv[2])
 
-CRAWL_LOG_FILENAME = 'logs/crawl.log'
+CRAWL_LOG_FILENAME = os.path.abspath('scripts/logs/crawl.log')
 
 def log_crawl_to_file(crawl_data, filename):
-    crawl_logfile = open(filename,'w')
-    crawl_logfile.write(crawl_data)
+    try:
+        crawl_logfile = open(filename,'w')
+    except:
+        e = sys.exc_info()[0]
+        print( "<p>Error: %s</p>" % e )
+        print('crawl.log file open failed')
+    try:
+        crawl_logfile.write(crawl_data)
+    except:
+        e = sys.exc_info()[0]
+        print( "<p>Error: %s</p>" % e )
+        print('crawl.log file write failed')
     crawl_logfile.close()
 
 
@@ -120,7 +131,6 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         crawl_data[website]['links'] = list(crawl_data[website]['links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
     log_crawl_to_file(crawl_data_json, CRAWL_LOG_FILENAME)
-
     return 0
 
 def df_crawl_with_keyword(starting_URL, page_limit, keyword):
