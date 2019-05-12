@@ -28,7 +28,7 @@ class InputForm extends Component {
     return (
       <div>
         {/* input form */}
-        <form action="http://localhost:5000" method="post" className="container">
+        <form action="/" method="post" className="container">
 
             {/* starting address */}
             <div className="form-group row">
