@@ -3,6 +3,7 @@ import './App.css';
 import {Router, Route} from 'react-router-dom'
 import HomeScreen from './screens/HomeScreen';
 import Results from './screens/Results';
+import Test from './screens/Test';
 
 import history from './history'
 
