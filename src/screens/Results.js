@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ForceGraph2D, ForceGraph3D, ForceGraphVR } from 'react-force-graph';
 import {Router, Route, Link} from 'react-router-dom'
+import loading from '../images/loading.gif'
 
 
 class Results extends Component {
@@ -8,76 +9,56 @@ class Results extends Component {
         super(props);
         this.state ={
             // data that will be displayed
+            // data: {},
+            loading: true,
             data: {
                 "nodes": [ 
                     { 
                       "id": "id1", // used to make the link
                       "name": "name1", // what will be displayed on node hover
-                    //   "val": 1,  // this will affect node size
                       "link" : "https://www.google.com", // what it will link to when clicked
                       "keyword" : "true" // used to determine if the node should be highlighted
 
                     },
                     { 
-                      "id": "id2",
-                      "name": "name2",
-                    //   "val": 10,
-                      "link" : "https://www.youtube.com",
-                      "keyword" : "false" 
-                    },
-                    { 
-                        "id": "id3",
-                        "name": "name3",
-                        // "val": 103,
-                        "link" : "https://www.espn.com",
-                        "keyword": "true" 
-                      },
-                      { 
-                        "id": "id4",
-                        "name": "name4",
-                        // "val": 103,
-                        "link" : "https://www.espn.com",
-                        "keyword": "true" 
-                      },
-                      { 
-                        "id": "id5",
-                        "name": "name5",
-                        // "val": 103,
-                        "link" : "https://www.espn.com",
-                        "keyword": "false" 
-                      },
-                      { 
-                        "id": "id6",
-                        "name": "name6",
-                        // "val": 103,
-                        "link" : "https://www.espn.com",
-                        "keyword": "true" 
-                      },
-                ],
-                "links": [
-                    {
-                        "source": "id1",
-                        "target": "id2"
-                    },
-                    {
-                        "source": "id1",
-                        "target": "id3"
-                    },
-                    {
-                        "source": "id3",
-                        "target": "id4"
-                    },
-                    {
-                        "source": "id3",
-                        "target": "id5"
-                    },
-                    {
-                        "source": "id3",
-                        "target": "id6"
-                    },
-                ]
-            }
+                        "id": "id2",
+                        "name": "name2",
+                      //   "val": 10,
+                        "link" : "https://www.youtube.com",
+                        "keyword" : "false" 
+                      },],
+                      "links": [
+                        {
+                            "source": "id1",
+                            "target": "id2"
+                        },]
+                }
+
         }
+    }
+    getResults = () => {
+
+        fetch('http://localhost:5000/', {
+            method: 'POST',
+            // params passed in through history props
+            body: this.props.history.location.state.param
+        }).then((response)=>
+            response.json()
+        ).then(data=>
+
+            // fix this once getting data formatted correctly from api
+            // this.setState({data: data, loading: false})
+            this.setState({data: data})
+
+            
+            
+        ).catch(error =>
+            console.log(error)
+        )
+    }
+    
+    componentDidMount = () =>{
+        this.getResults();
     }
 
 
@@ -88,12 +69,18 @@ class Results extends Component {
         <h1>Crawl Results</h1>
 
         <div style={{paddingTop: "3%"}}>
+        {
+            // this will contain the variables needed to make the api call
+            console.log(this.props.history.location.state.param)
+        }
 
         {/* 
             NPM package to display the results
             Documentation at: https://github.com/vasturiano/react-force-graph
         */}
-          <ForceGraph2D
+        {
+            !this.state.loading? 
+            <ForceGraph2D
             graphData={this.state.data}
             height={500}
             nodeAutoColorBy="keyword"
@@ -101,7 +88,13 @@ class Results extends Component {
             showNavInfo="true"
             onNodeClick={(node) => {window.location.assign(node.link)}}
             />
-
+            :
+            // add loading spinner
+            <div >
+                <img src={loading} style={{width: "50%", height: "50%"}}/>
+            </div>
+            
+        }
         {/* 
             Legend that tells the user about the graph
         */}
@@ -111,7 +104,7 @@ class Results extends Component {
                     <h1>LEGEND</h1>
                     <div>
                         <div style={{display: "inline"}}>
-                            <span class="dot" style={{
+                            <span className="dot" style={{
                                 height: "25px",
                                 width: "25px",
                                 border: "1px solid black",
@@ -123,7 +116,7 @@ class Results extends Component {
 
                             <br></br>
 
-                            <span class="dot" style={{
+                            <span className="dot" style={{
                                 height: "25px",
                                 width: "25px",
                                 border: "1px solid black",

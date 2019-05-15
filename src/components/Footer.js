@@ -8,7 +8,7 @@ class Footer extends Component {
         bottom: "0",
         width: "100%",
         height: "8%",
-        backgroundColor: "gray",
+        backgroundColor: "black",
         color: "white",
         textAlign: "center"
     }
