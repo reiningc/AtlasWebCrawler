@@ -11,37 +11,48 @@ import crawler.parseHTML
 import random
 import time
 import json
-from collections import deque
 import sys
+import os.path
+from collections import deque
 
 KEYWORD = None
 if len(sys.argv) < 3:
     raise ValueError('Not enough arguments. Include starting URL and breadth limit.')
+elif len(sys.argv) > 4:
+    raise ValueError('Too many arguments. Include starting URL, page limit, and keyword (optional).')
 elif len(sys.argv) == 4:
     KEYWORD = sys.argv[3]
 START = sys.argv[1]
 LIMIT = int(sys.argv[2])
 
-CRAWL_LOG_FILENAME = os.path.abspath('scripts/logs/crawl.log')
+CRAWL_LOG_FILENAME = os.path.abspath('logs/crawl.log')
 
 def log_crawl_to_file(crawl_data, filename):
     try:
         crawl_logfile = open(filename,'w')
     except:
         e = sys.exc_info()[0]
-        print( "<p>Error: %s</p>" % e )
-        print('crawl.log file open failed')
+        print(f'Error: {e}' )
+        print(f'{filename} - file open failed')
     try:
         crawl_logfile.write(crawl_data)
     except:
         e = sys.exc_info()[0]
-        print( "<p>Error: %s</p>" % e )
-        print('crawl.log file write failed')
+        print(f'Error: {e}' )
+        print(f'{filename} - file write failed')
     crawl_logfile.close()
+
+def add_links_to_site_origin(origins_dict, origin, links):
+    for link in links:
+        origins_dict[link] = origin
+
+def add_links_to_current_level(current_level_links,links):
+    for link in links:
+        current_level_links.append(link)
 
 def bf_crawl(starting_URL, breadth_limit, keyword=None):
     if breadth_limit < 1:
-        error_message = 'Page limit must be at least 1 for breadth first crawl.'
+        error_message = 'Breadth limit must be at least 1 for breadth first crawl.'
         crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
         return -1
 
@@ -52,11 +63,13 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     crawl_delay = 1
     site_title = ''
     site_links = set()
-    crawl_data = {}                             # crawl_data will be stored in crawl.log at end of crawl
-    uncrawlable_links = set()
-    sites_to_visit = deque()                    # queue for links to be visited during breadth-first traversal
-    current_level_links = deque()               # queue for nodes on current level - used for adding links to sites_to_visit at end of level
+    crawl_data = {}                 # crawl_data will be stored in crawl.log at end of crawl
+    site_origins = {}               # how crawler reached each site
+    uncrawlable_links = set()       # links unable to be reached
+    sites_to_visit = deque()        # queue for links to be visited during breadth-first traversal
+    current_level_links = deque()   # queue for nodes on current level - used for adding links to sites_to_visit at end of level
     current_level_links.append(cleaned_starting_URL)
+    site_origins[cleaned_starting_URL] = None
     current_breadth_level = 0
 
     while current_breadth_level < breadth_limit:
@@ -66,7 +79,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
         # visit each link possible in sites_to_visit
         while len(sites_to_visit) > 0:
             if starting_URL in uncrawlable_links:
-                error_message = 'Breadth First Crawl failed. Starting URL: ' + starting_URL +' unable to be crawled.'
+                error_message = f'Breadth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
                 crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
                 return -1
             current_URL = sites_to_visit.popleft()
@@ -80,10 +93,23 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
             else:
                 # pull site title
                 # pull webpage links
-                site_title = crawler.parseHTML.get_page_title(current_URL)
+                # add links to site_origins and current_level_links
+                # add URL to crawl data
+                site_title = crawler.parseHTML.get_page_title(site_html)
                 site_links = crawler.parseHTML.get_all_links(site_html,current_URL,crawl_data.keys())
+                add_links_to_site_origin(site_origins,current_URL,site_links)
+                add_links_to_current_level(current_level_links,site_links)
+                crawl_data[current_URL] = {'originURL':site_origins[current_URL],'siteTitle':site_title,'keywordFound':False, 'links':site_links}
+                time.sleep(crawl_delay)
+        # Finished crawling current level
+        current_breadth_level += 1
 
-                crawl_data[current_URL] = {'originURL':last_visited_URL,'siteTitle':site_title,'keywordFound':False, 'links':site_links}
+    # convert sets of links in crawl_data to lists for json conversion, then
+    # save crawl in log file
+    for website in crawl_data:
+        crawl_data[website]['links'] = list(crawl_data[website]['links'])
+    crawl_data_json = json.dumps(crawl_data, indent=4)
+    log_crawl_to_file(crawl_data_json, CRAWL_LOG_FILENAME)
 
 
     return 0
