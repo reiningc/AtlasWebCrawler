@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-app.set('port', process.argv[2]);
+const port = process.env.PORT || 5000;
 var path = require('path');
 
 
@@ -46,8 +46,7 @@ app.use(function (err, req, res, next) {
   res.send('500');
 });
 
-app.listen(app.get('port'), function () {
-  console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate.');
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`)
 });
-
 

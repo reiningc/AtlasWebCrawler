@@ -6,8 +6,9 @@ import urllib.request
 import urllib.parse
 import urllib.robotparser
 import urllib.error
+import os.path
 
-ERROR_LOG_FILENAME = 'logs/error.log'
+ERROR_LOG_FILENAME = os.path.abspath('scripts/logs/error.log')
 
 def log_error_to_file(message,filename):
     error_logfile = open(filename,'a')
