@@ -31,15 +31,9 @@ def is_relative_link(link_class, link_title, link_URL, container_class):
     return False
 
 def get_page_title(webpage):
-    start_of_title_index = webpage.find('<title>') + 7   # +7 chars to offset length of <title>
-
-    # if find returns -1, then <title> has not been found in webpage
-    if start_of_title_index < 0:
-        raise ValueError('No title tags in webpage')
+    soup = BeautifulSoup(webpage,'html.parser')
+    return soup.title.string
     
-    end_of_title_index = webpage.find('<',start_of_title_index)
-
-    return webpage[start_of_title_index:end_of_title_index]
 
 def format_relative_URL(relative_URL, origin_URL):
     # levels up needed to attach relative_URL to the end of origin_URL
