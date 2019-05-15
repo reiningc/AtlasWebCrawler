@@ -17,6 +17,8 @@ import os.path
 KEYWORD = None
 if len(sys.argv) < 3:
     raise ValueError('Not enough arguments. Include starting URL and page limit.')
+elif len(sys.argv) > 4:
+    raise ValueError('Too many arguments. Include starting URL, page limit, and keyword (optional).')
 elif len(sys.argv) == 4:
     KEYWORD = sys.argv[3]
 START = sys.argv[1]
