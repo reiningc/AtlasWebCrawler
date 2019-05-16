@@ -1,37 +1,17 @@
 {
-  "name": "new-app",
+  "name": "atlas",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {
-    "dotenv": "^7.0.0",
-    "express": "^4.16.4",
-    "history": "^4.9.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-force-graph": "^1.21.1",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "^3.0.0"
-  },
-  "devDependencies": {},
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client-install": "npm install --prefix AtlasWebCrawler",
+    "start": "node index.js",
+    "server": "nodemon index.js",
+    "client": "npm start --prefix AtlasWebCrawler",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix AtlasWebCrawler && npm run build --prefix AtlasWebCrawler"
   },
   "author": "",
-  "license": "ISC",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "proxy": "http://localhost:5000/"
+  "license": "ISC"
 }
