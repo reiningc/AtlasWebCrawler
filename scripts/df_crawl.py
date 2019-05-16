@@ -8,6 +8,7 @@
 
 import crawler.request
 import crawler.parseHTML
+import crawler.logging
 import random
 import time
 import json
@@ -24,28 +25,11 @@ elif len(sys.argv) == 4:
 START = sys.argv[1]
 LIMIT = int(sys.argv[2])
 
-CRAWL_LOG_FILENAME = os.path.abspath('scripts/logs/crawl.log')
-
-def log_crawl_to_file(crawl_data, filename):
-    try:
-        crawl_logfile = open(filename,'w')
-    except:
-        e = sys.exc_info()[0]
-        print( "<p>Error: %s</p>" % e )
-        print('crawl.log file open failed')
-    try:
-        crawl_logfile.write(crawl_data)
-    except:
-        e = sys.exc_info()[0]
-        print( "<p>Error: %s</p>" % e )
-        print('crawl.log file write failed')
-    crawl_logfile.close()
-
 
 def df_crawl(starting_URL, page_limit, keyword=None):
     if page_limit < 1:
         error_message = 'Page limit must be at least 1 for depth first crawl.'
-        crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+        crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
         return -1
 
     if keyword is not None:
@@ -70,10 +54,10 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         while current_URL in uncrawlable_links or site_html == -1:
             if starting_URL in uncrawlable_links:
                 error_message = 'Depth First Crawl failed. Starting URL: ' + starting_URL +' unable to be crawled.'
-                crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+                crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
                 return -1
 
-            print('PREPARING URL: ', current_URL)
+            #print('PREPARING URL: ', current_URL)
             # add scheme to URL if needed
             current_URL = crawler.request.prepare_URL_for_crawl(current_URL)
             # request html webpage
@@ -104,7 +88,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         
         crawl_data[current_URL] = {'originURL':last_visited_URL,'siteTitle':site_title,'keywordFound':False, 'links':site_links}
         
-        print("crawled",current_URL)
+        #print("crawled",current_URL)
         last_visited_URL = current_URL
 
         # randomly choose one of the links to visit next
@@ -132,7 +116,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     for website in crawl_data:
         crawl_data[website]['links'] = list(crawl_data[website]['links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
-    log_crawl_to_file(crawl_data_json, CRAWL_LOG_FILENAME)
+    crawler.logging.log_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
     return 0
 
 def df_crawl_with_keyword(starting_URL, page_limit, keyword):

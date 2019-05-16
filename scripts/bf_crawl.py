@@ -8,6 +8,7 @@
 
 import crawler.request
 import crawler.parseHTML
+import crawler.logging
 import random
 import time
 import json
@@ -25,22 +26,6 @@ elif len(sys.argv) == 4:
 START = sys.argv[1]
 LIMIT = int(sys.argv[2])
 
-CRAWL_LOG_FILENAME = os.path.abspath('logs/crawl.log')
-
-def log_crawl_to_file(crawl_data, filename):
-    try:
-        crawl_logfile = open(filename,'w')
-    except:
-        e = sys.exc_info()[0]
-        print(f'Error: {e}' )
-        print(f'{filename} - file open failed')
-    try:
-        crawl_logfile.write(crawl_data)
-    except:
-        e = sys.exc_info()[0]
-        print(f'Error: {e}' )
-        print(f'{filename} - file write failed')
-    crawl_logfile.close()
 
 def add_links_to_site_origin(origins_dict, origin, links):
     for link in links:
@@ -53,7 +38,7 @@ def add_links_to_current_level(current_level_links,links):
 def bf_crawl(starting_URL, breadth_limit, keyword=None):
     if breadth_limit < 1:
         error_message = 'Breadth limit must be at least 1 for breadth first crawl.'
-        crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+        crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
         return -1
 
     if keyword is not None:
@@ -80,7 +65,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
         while len(sites_to_visit) > 0:
             if starting_URL in uncrawlable_links:
                 error_message = f'Breadth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
-                crawler.request.log_error_to_file(error_message,crawler.request.ERROR_LOG_FILENAME)
+                crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
                 return -1
             current_URL = sites_to_visit.popleft()
             # prep URL for requesting webpage (add scheme if needed)
@@ -109,8 +94,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     for website in crawl_data:
         crawl_data[website]['links'] = list(crawl_data[website]['links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
-    log_crawl_to_file(crawl_data_json, CRAWL_LOG_FILENAME)
-
+    crawler.logging.log_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
 
     return 0
 
