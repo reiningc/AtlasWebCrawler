@@ -180,7 +180,7 @@ def get_all_links(webpage, URL, visited_URLs):
             #   - are not already in the list of relative links
             if not is_ignorable_link \
                 and link_URL not in unique_links \
-                and link_URL is not URL \
+                and link_URL != URL \
                 and link_URL not in relative_links:
                 unique_links.add(link_URL)
 
@@ -190,7 +190,8 @@ def get_all_links(webpage, URL, visited_URLs):
     # format relative links and to unique links
     for link in relative_links:
         formatted_link = format_relative_URL(link,URL)
-        if formatted_link not in unique_links:
+        if formatted_link not in unique_links \
+            and formatted_link != URL:
             unique_links.add(formatted_link)
 
     return unique_links
