@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-install": "npm install --prefix AtlasWebCrawler",
+    "client-install": "npm install --prefix client",
     "start": "node index.js",
     "server": "nodemon index.js",
-    "client": "npm start --prefix AtlasWebCrawler",
+    "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix AtlasWebCrawler && npm run build --prefix AtlasWebCrawler"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
-  "author": "",
-  "license": "ISC"
+  "dependencies": {
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4"
+  }
 }

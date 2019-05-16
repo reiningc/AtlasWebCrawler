@@ -21,12 +21,12 @@ app.get('/', (req, res) => {
 app.post('/', (req, res)=>{
   console.log(req.body);
   var spawn = require("child_process").spawn;
-  const depthCrawl = spawn('python',["./AtlasWebCrawler/scripts/df_crawl.py", 
+  const depthCrawl = spawn('python',["./scripts/df_crawl.py", 
   req.body.website, req.body.depth]);
   depthCrawl.on('exit', function (code, signal) {
     depthCrawl.stdout.pipe(process.stdout);
     console.log('child process exited');
-    res.sendFile(path.join(__dirname, '/AtlasWebCrawler/scripts/logs', 'crawl.log'));
+    res.sendFile(path.join(__dirname, '/scripts/logs', 'crawl.log'));
   });
   
   
@@ -35,10 +35,10 @@ app.post('/', (req, res)=>{
 
 if (process.env.NODE_ENV === 'production') {
   // Serve any static files
-  app.use(express.static(path.join(__dirname, 'AtlasWebCrawler/build')));
+  app.use(express.static(path.join(__dirname, 'client/build')));
   // Handle React routing, return all requests to React app
   app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'AtlasWebCrawler/build', 'index.html'));
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
 
