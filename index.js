@@ -8,13 +8,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const port = process.env.PORT || 5000;
 var path = require('path');
-
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 
 
 // create a GET route
 app.get('/', (req, res) => {
-  res.send("ok");
+  res.render("index.html");
 });
 
 
