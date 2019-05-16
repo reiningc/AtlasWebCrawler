@@ -62,7 +62,11 @@ class InputForm extends Component {
         //         console.log(error)
         //         )
         
-        history.push('/results', {param})
+        //history.push('/results', {param})
+        fetch('/', {
+            method: 'POST',
+            body: param,
+          });
     }
 
     setWebsite=(e)=> {
