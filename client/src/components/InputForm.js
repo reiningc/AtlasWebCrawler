@@ -63,13 +63,16 @@ class InputForm extends Component {
         //         )
         
         
-        fetch('/', {
+        fetch('/' + param.searchType, {
             method: 'POST',
-            body: param,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ param })
           });
         history.push('/results', {param})
     }
-
+    
     setWebsite=(e)=> {
         this.setState({website: e.target.value});
     }
