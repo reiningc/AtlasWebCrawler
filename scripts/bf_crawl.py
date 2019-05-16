@@ -94,7 +94,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     for website in crawl_data:
         crawl_data[website]['links'] = list(crawl_data[website]['links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
-    crawler.logging.log_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
+    crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
 
     return 0
 
