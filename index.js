@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 
 app.post('/dfs', (req, res)=>{
-  console.log("in dfs");
+  
   console.log(req.body.website);
   var spawn = require("child_process").spawn;
   const depthCrawl = spawn('python',["./scripts/df_crawl.py", 
