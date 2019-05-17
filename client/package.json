@@ -16,6 +16,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -31,10 +32,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-<<<<<<< HEAD
-  }
-=======
   },
   "proxy": "http://localhost:5000/"
->>>>>>> 731313052b2f0c7e5b149b9f5afdb1e853e115de
 }
