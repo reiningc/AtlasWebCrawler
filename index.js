@@ -19,13 +19,17 @@ app.get('/', (req, res) => {
 
 
 app.post('/dfs', (req, res)=>{
-  
-  console.log(req.body.website);
+  console.log(req.body);
   var spawn = require("child_process").spawn;
   const depthCrawl = spawn('python',["./scripts/df_crawl.py", 
-  req.body.param.website, req.body.param.depth, req.body.param.keyword]);
+  req.body.website, req.body.depth, req.body.keyword]);
+  depthCrawl.stdout.on('data', function(data) {
+    console.log('stdout: ' + data);
+  });
+  depthCrawl.stderr.on('data', function(data) {
+    console.log('stderr: ' + data);
+  });
   depthCrawl.on('exit', function (code, signal) {
-    depthCrawl.stdout.pipe(process.stdout);
     console.log('child process exited');
     res.sendFile(path.join(__dirname, '/scripts/logs', 'crawl.log'));
   });
@@ -36,10 +40,10 @@ app.post('/dfs', (req, res)=>{
 
 app.post('/bfs', (req, res)=>{
   
-  console.log(req.body.param.website);
+  console.log(req.body.website);
   var spawn = require("child_process").spawn;
   const depthCrawl = spawn('python',["./scripts/bf_crawl.py", 
-  req.body.param.website, req.body.param.depth, req.body.param.keyword]);
+  req.body.website, req.body.depth, req.body.keyword]);
   depthCrawl.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
   });
