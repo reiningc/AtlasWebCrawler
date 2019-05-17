@@ -35,10 +35,11 @@ app.post('/dfs', (req, res)=>{
 
 
 app.post('/bfs', (req, res)=>{
-  console.log(req.body);
+  
+  console.log(req.body.param.website);
   var spawn = require("child_process").spawn;
   const depthCrawl = spawn('python',["./scripts/bf_crawl.py", 
-  req.body.website, req.body.depth, req.body.keyword]);
+  req.body.param.website, req.body.param.depth, req.body.param.keyword]);
   depthCrawl.on('exit', function (code, signal) {
     depthCrawl.stdout.pipe(process.stdout);
     console.log('child process exited');
