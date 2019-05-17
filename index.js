@@ -42,11 +42,9 @@ app.post('/bfs', (req, res)=>{
   req.body.param.website, req.body.param.depth, req.body.param.keyword]);
   depthCrawl.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
-    //Here is where the output goes
   });
   depthCrawl.stderr.on('data', function(data) {
     console.log('stderr: ' + data);
-    //Here is where the error output goes
   });
   depthCrawl.on('exit', function (code, signal) {
     console.log('child process exited');
