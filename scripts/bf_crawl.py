@@ -26,10 +26,14 @@ elif len(sys.argv) == 4:
 START = sys.argv[1]
 LIMIT = int(sys.argv[2])
 
+def add_links_to_links_already_seen(seen_links, new_links):
+    for link in new_links:
+        seen_links.add(link)
 
 def add_links_to_site_origin(origins_dict, origin, links):
     for link in links:
-        origins_dict[link] = origin
+        if link not in origins_dict.keys():
+            origins_dict[link] = origin
 
 def add_links_to_current_level(current_level_links,links):
     for link in links:
@@ -44,18 +48,23 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     if keyword is not None:
         return bf_crawl_with_keyword(starting_URL, breadth_limit, keyword)
 
+    current_breadth_level = 0
+    keywordFound = False
+    site_id_num = 0
     cleaned_starting_URL = crawler.request.prepare_URL_for_crawl(starting_URL)
     crawl_delay = 1
     site_title = ''
     site_links = set()
     crawl_data = {}                 # crawl_data will be stored in crawl.log at end of crawl
+    crawl_data['nodes'] = []
+    crawl_data['links'] = []        
+    links_already_seen = set([cleaned_starting_URL])      # all links seen by crawler (even unvisited)
     site_origins = {}               # how crawler reached each site
     uncrawlable_links = set()       # links unable to be reached
     sites_to_visit = deque()        # queue for links to be visited during breadth-first traversal
     current_level_links = deque()   # queue for nodes on current level - used for adding links to sites_to_visit at end of level
     current_level_links.append(cleaned_starting_URL)
     site_origins[cleaned_starting_URL] = None
-    current_breadth_level = 0
 
     while current_breadth_level < breadth_limit:
         # load links into nodes to visit queue from the current level's links
@@ -77,22 +86,29 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
                 uncrawlable_links.add(current_URL)
             else:
                 # pull site title
-                # pull webpage links
+                # pull webpage links (unless this is the last level)
                 # add links to site_origins and current_level_links
                 # add URL to crawl data
                 site_title = crawler.parseHTML.get_page_title(site_html)
-                site_links = crawler.parseHTML.get_all_links(site_html,current_URL,crawl_data.keys())
-                add_links_to_site_origin(site_origins,current_URL,site_links)
+                if current_breadth_level+1 != breadth_limit:
+                    site_links = crawler.parseHTML.get_all_links(site_html,current_URL,links_already_seen)
+                add_links_to_site_origin(site_origins,site_id_num,site_links)
                 add_links_to_current_level(current_level_links,site_links)
-                crawl_data[current_URL] = {'originURL':site_origins[current_URL],'siteTitle':site_title,'keywordFound':False, 'links':site_links}
+
+                crawl_data['nodes'].append({'id': site_id_num,'name': site_title,'link':current_URL,'keyword':keywordFound})
+                if len(links_already_seen) != 1:
+                    crawl_data['links'].append({'source': site_id_num, 'target': site_origins[current_URL]})
+                # add all the new site links to set of links already seen
+                add_links_to_links_already_seen(links_already_seen,site_links)
+                site_id_num += 1
                 time.sleep(crawl_delay)
         # Finished crawling current level
         current_breadth_level += 1
 
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
-    for website in crawl_data:
-        crawl_data[website]['links'] = list(crawl_data[website]['links'])
+    #for website in crawl_data['nodes']:
+    #    website['site_links'] = list(website['site_links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
     crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
 

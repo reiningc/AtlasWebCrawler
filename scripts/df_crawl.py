@@ -37,13 +37,18 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     
     # count of pages crawled
     pages_crawled = 0
-    last_visited_URL = None
+    keywordFound = False
+    site_id_num = 0
+    last_site_id_num = None
     # start at starting URL
     current_URL = starting_URL
 
     uncrawlable_links = set()
     crawl_delay = 1
     crawl_data = {}
+    crawl_data['nodes'] = []
+    crawl_data['links'] = []
+    crawled_sites = set()
     site_title = ''
     site_links = set()
     # crawl until we hit page limit
@@ -53,11 +58,10 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         # look for good URL to crawl from list of URLs 
         while current_URL in uncrawlable_links or site_html == -1:
             if starting_URL in uncrawlable_links:
-                error_message = 'Depth First Crawl failed. Starting URL: ' + starting_URL +' unable to be crawled.'
+                error_message = f'Depth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
                 crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
                 return -1
 
-            #print('PREPARING URL: ', current_URL)
             # add scheme to URL if needed
             current_URL = crawler.request.prepare_URL_for_crawl(current_URL)
             # request html webpage
@@ -69,7 +73,6 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                 if len(site_links) > 1:
                     next_URL_list = random.sample(site_links,k=1)
                     while next_URL_list[0] in crawl_data.keys():
-                        #print('duplicate URL avoidance ACTIVATED! url:',next_URL_list[0])
                         next_URL_list = random.sample(site_links,k=1)
                 
                 # If no links, error out
@@ -86,24 +89,28 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         # get all links from webpage
         site_links = crawler.parseHTML.get_all_links(site_html, current_URL, crawl_data.keys())
         
-        crawl_data[current_URL] = {'originURL':last_visited_URL,'siteTitle':site_title,'keywordFound':False, 'links':site_links}
-        
-        #print("crawled",current_URL)
-        last_visited_URL = current_URL
+        crawl_data['nodes'].append({'id': site_id_num, 'name': site_title,'link': current_URL,'keyword': keywordFound})
+        # don't add links for first site crawled
+        if len(crawled_sites) != 0:
+            crawl_data['links'].append({'source': site_id_num,'target': last_site_id_num})
+        crawled_sites.add(current_URL)
+
+        last_site_id_num = site_id_num
+        site_id_num += 1
 
         # randomly choose one of the links to visit next
         
         # Prevent cycles by avoiding visited links
-        if len(site_links) > 1:
+        if len(site_links) >= 1:
             next_URL_list = random.sample(site_links,k=1)
-            while next_URL_list[0] in crawl_data.keys():
+            while next_URL_list[0] in crawled_sites:
                 #print('duplicate URL avoidance ACTIVATED! url:',next_URL_list[0])
                 next_URL_list = random.sample(site_links,k=1)
         
         # If no links, error out
         if len(next_URL_list) < 1:
             pages_crawled = page_limit
-            print("no links!")
+            print("length of next_URL_list is < 1 - no links!")
             #raise ValueError('No links available')
         else:
             current_URL = next_URL_list[0]
@@ -113,8 +120,6 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
-    for website in crawl_data:
-        crawl_data[website]['links'] = list(crawl_data[website]['links'])
     crawl_data_json = json.dumps(crawl_data, indent=4)
     crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
     return 0
