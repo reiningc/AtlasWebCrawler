@@ -10,6 +10,9 @@ def parse_base_URL(URL):
     return parsedURL.scheme + '://' + parsedURL.netloc
 
 def is_relative_link(link_class, link_title, link_URL, container_class):
+    if link_URL.startswith("http"):
+        return False
+
     # relative links within a <div>
     if container_class and ('rel' in container_class or 'internal' in container_class):
         return True
@@ -20,19 +23,21 @@ def is_relative_link(link_class, link_title, link_URL, container_class):
     # - link starts with '/', but not '//: /index.html or /general
     # - link is in the title
     # - link is just 'index.html'
-
     if link_class and 'internal' in link_class \
         or link_URL.startswith('.') \
         or link_URL.startswith('/') and not link_URL.startswith('//') \
         or link_title \
         or link_URL == 'index.html':
         return True
-
+    
     return False
 
 def get_page_title(webpage):
     soup = BeautifulSoup(webpage,'html.parser')
-    return soup.title.string
+    if soup.title != None:
+        return soup.title.string
+    else:
+        return 'No Site Title'
     
 
 def format_relative_URL(relative_URL, origin_URL):
@@ -121,6 +126,11 @@ def has_ignorable_beginning_or_ending(link_URL):
     
     return False
 
+def contains_keyword(soup):
+
+    return 0
+
+
 # get_all_links takes in an HTML webpage and returns
 # the set of unique links on that webpage
 def get_all_links(webpage, URL, visited_URLs):
@@ -172,6 +182,13 @@ def get_all_links(webpage, URL, visited_URLs):
                 and 'http://' + link_URL[len('https://'):] in visited_URLs:
                     is_ignorable_link = True
 
+            # check for duplicate links ending with /
+            if link_URL.endswith('/') \
+                and link_URL[:-1] in visited_URLs:
+                    is_ignorable_link = True
+            elif not link_URL.endswith('/') \
+                and link_URL + '/' in visited_URLs:
+                    is_ignorable_link = True
 
             # only add links that:
             #   - are not an ignorable link
