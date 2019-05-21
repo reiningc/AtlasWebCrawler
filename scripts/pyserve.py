@@ -3,7 +3,6 @@ import socket
 
 import os
 from kombu import Connection, Exchange, Queue, Consumer
-from Queue import  Empty
 import testfunc
 
 video_queue = Queue('tasks')
