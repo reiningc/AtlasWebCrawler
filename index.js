@@ -10,7 +10,10 @@ const port = process.env.PORT || 5000;
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'client/build')));
 
+var q = 'tasks';
 
+var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
+var open = require('amqplib').connect(url);
 
 // create a GET route
 app.get('/', (req, res) => {
@@ -19,20 +22,16 @@ app.get('/', (req, res) => {
 
 
 app.post('/dfs', (req, res)=>{
-  console.log(req.body);
-  var spawn = require("child_process").spawn;
-  const depthCrawl = spawn('python',["./scripts/df_crawl.py", 
-  req.body.website, req.body.depth, req.body.keyword]);
-  depthCrawl.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
-  });
-  depthCrawl.stderr.on('data', function(data) {
-    console.log('stderr: ' + data);
-  });
-  depthCrawl.on('exit', function (code, signal) {
-    console.log('child process exited');
-    res.sendFile(path.join(__dirname, '/scripts/logs', 'crawl.log'));
-  });
+  console.log(req.body.depth);
+  open.then(function(conn) {
+    var ok = conn.createChannel();
+    ok = ok.then(function(ch) {
+      ch.assertQueue(q);
+      ch.sendToQueue(q, Buffer.from(req.body.depth));
+    });
+    return ok;
+  }).then(null, console.warn);
+  res.render('results');
   
   
 });
@@ -41,19 +40,7 @@ app.post('/dfs', (req, res)=>{
 app.post('/bfs', (req, res)=>{
   
   console.log(req.body.website);
-  var spawn = require("child_process").spawn;
-  const depthCrawl = spawn('python',["./scripts/bf_crawl.py", 
-  req.body.website, req.body.depth, req.body.keyword]);
-  depthCrawl.stdout.on('data', function(data) {
-    console.log('stdout: ' + data);
-  });
-  depthCrawl.stderr.on('data', function(data) {
-    console.log('stderr: ' + data);
-  });
-  depthCrawl.on('exit', function (code, signal) {
-    console.log('child process exited');
-    res.sendFile(path.join(__dirname, '/scripts/logs', 'crawl.log'));
-  });
+  
   
   
 });
