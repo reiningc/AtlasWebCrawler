@@ -1,2 +1,2 @@
 beautifulsoup4==4.7.1
-pika==0.9.14
+kombu=4.5.0

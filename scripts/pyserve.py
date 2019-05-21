@@ -1,17 +1,12 @@
 #! python3.6
 
-import pika, os, urlparse
+import os
+from kombu import connection
 import testfunc
 print("pyserve: starting connection to cloudamqp ... ")
-url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
-url = urlparse.urlparse(url_str)
-params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
-    credentials=pika.PlainCredentials(url.username, url.password))
-
-connection = pika.BlockingConnection(params) # Connect to CloudAMQP
-
-channel = connection.channel()
-
+rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
+conn = Connection(rabbit_url)
+channel = conn.channel()
 channel.queue_declare(queue='tasks')
 
 
