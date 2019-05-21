@@ -6,7 +6,7 @@ import testfunc
 print("pyserve: starting connection to cloudamqp ... ")
 rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 conn = Connection(rabbit_url)
-queue = Queue(name=”example-queue”)
+queue = Queue(name=”tasks”)
 
 
 def on_request(ch, method, props, body):
