@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
 
 
 app.post('/dfs', (req, res)=>{
-  console.log(req.body.param.depth);
-  var number = toString(req.body.para.depth);
+  console.log(req.body.param);
+  var number = toString(req.body.param.depth);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
