@@ -1,13 +1,12 @@
 #! python3.6
-
+import socket
 import os
-from kombu import connection
+from kombu import Connection, Queue, Consumer
 import testfunc
 print("pyserve: starting connection to cloudamqp ... ")
 rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 conn = Connection(rabbit_url)
-channel = conn.channel()
-channel.queue_declare(queue='tasks')
+queue = Queue(name=”example-queue”)
 
 
 def on_request(ch, method, props, body):
@@ -17,9 +16,9 @@ def on_request(ch, method, props, body):
     response = testfunc.add1(n)
     print("results: %d" + str(response))
     
-
-channel.basic_qos(prefetch_count=1)
-channel.basic_consume(queue='tasks', on_message_callback=on_request, no_ack=True)
-
-print(" [x] Awaiting RPC requests")
-channel.start_consuming()
+with Consumer(conn, queues=queue, callbacks=[on_request], accept=["text/plain"]): 
+  while True:
+  try:
+    conn.drain_events(timeout=2)
+  except socket.timeout:
+    pass # This will do for now
