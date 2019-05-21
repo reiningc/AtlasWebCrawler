@@ -17,7 +17,7 @@ with Connection(rabbit_url) as conn:
 
 
 
-def on_request(ch, method, props, body):
+def on_request(body, message):
     n = int(body)
 
     print("running testfunc")
