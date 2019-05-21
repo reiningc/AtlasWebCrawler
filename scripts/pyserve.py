@@ -1,4 +1,4 @@
-#! python3
+#! python3.6
 
 import pika, os, urlparse
 import testfunc
