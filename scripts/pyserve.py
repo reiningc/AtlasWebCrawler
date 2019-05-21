@@ -2,7 +2,7 @@
 
 import pika, os, urlparse
 import testfunc
-
+print("pyserve: starting connection to cloudamqp ... ")
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 url = urlparse.urlparse(url_str)
 params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],

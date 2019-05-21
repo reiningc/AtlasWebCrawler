@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 
 
 app.post('/dfs', (req, res)=>{
-  console.log(req.body.depth);
+  console.log(req.body.param.depth);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
