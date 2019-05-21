@@ -32,7 +32,7 @@ app.post('/dfs', (req, res)=>{
     });
     return ok;
   }).then(null, console.warn);
-  res.render('results');
+  
   
   
 });
