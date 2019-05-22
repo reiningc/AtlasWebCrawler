@@ -3,7 +3,7 @@ import socket
 
 import os
 from kombu import Connection, Exchange, Queue, Consumer
-import dr_crawl
+import df_crawl
 
 crawl_queue = Queue('tasks')
 print("pyserve: starting connection to cloudamqp ... ")
