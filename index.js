@@ -23,7 +23,8 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
-  var args = JSON.parse(req.body);
+  var args = JSON.stringify(req.body.param);
+  console.log(args);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
