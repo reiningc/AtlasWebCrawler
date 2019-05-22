@@ -10,10 +10,11 @@ print("pyserve: starting connection to cloudamqp ... ")
 rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 
 def on_request(body, message):
-    n = int(body)
+    
     print("running testfunc")
-    response = testfunc.add1(n)
-    print("results: %d" + str(response))
+    print(body)
+    #response = testfunc.add1(n)
+    
 
 
 with Connection(rabbit_url) as conn:
