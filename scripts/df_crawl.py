@@ -128,4 +128,4 @@ def df_crawl_with_keyword(starting_URL, page_limit, keyword):
 
     return 0
 
-df_crawl(START,LIMIT,KEYWORD)
+#df_crawl(START,LIMIT,KEYWORD)

@@ -12,7 +12,7 @@ rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 def on_request(body, message):
     print("running testfunc")
     print(body)
-    #response = testfunc.add1(n)
+    
     
 
 
