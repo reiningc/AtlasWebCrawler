@@ -23,11 +23,12 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
+  var args = JSON.parse(req.body);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.assertQueue(q);
-      ch.sendToQueue(q, Buffer.from(req.body));
+      ch.sendToQueue(q, Buffer.from(args));
     });
     return ok;
   }).then(null, console.warn);
