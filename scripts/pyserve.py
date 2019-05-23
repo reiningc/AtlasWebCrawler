@@ -13,8 +13,8 @@ def on_request(body, message):
     print("running df_crawl")
     print(body)
     args = json.loads(body)
-    site = args.website
-    dep = args.depth
+    site = args["website"]
+    dep = args["depth"]
     df_crawl.df_crawl(site, dep)
     
     
