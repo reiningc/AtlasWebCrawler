@@ -26,7 +26,7 @@ app.post('/dfs', (req, res)=>{
   var weba = req.body.param.website;
   var depa = req.body.param.depth;
   var key = req.body.param.keyword;
-  var argList = '{ "website":' + weba + ' "depth":' + depa + ' "keyword":' + key + '}';
+  var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
   console.log(argList);
   open.then(function(conn) {
     var ok = conn.createChannel();
