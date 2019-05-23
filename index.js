@@ -23,13 +23,15 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
-  var args = req.body.param.website + ', ' + req.body.param.depth;
+  var webargs = JSON.stringify(req.body.param.website); 
+  var deptharg = JSON.stringify(req.body.param.depth);
+  var argList = webargs + ', ' + deptharg;
   console.log(args);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.assertQueue(q);
-      ch.sendToQueue(q, Buffer.from(args));
+      ch.sendToQueue(q, Buffer.from(argList));
     });
     return ok;
   }).then(null, console.warn);
