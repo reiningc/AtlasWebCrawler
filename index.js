@@ -23,7 +23,10 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
-  var argList = JSON.stringify(req.body.param);
+  var weba = req.body.website;
+  var depa = req.body.depth;
+  var key = req.body.keyword;
+  var argList = JSON.stringify({website: weba, depth: depa, keyword: key});
   console.log(argList);
   open.then(function(conn) {
     var ok = conn.createChannel();
