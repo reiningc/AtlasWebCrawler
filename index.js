@@ -23,9 +23,9 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
-  var weba = req.body.param.website;
+  var weba = JSON.stringify(req.body.param.website);
   var depa = req.body.param.depth;
-  var key = req.body.param.keyword;
+  var key = JSON.stringify(req.body.param.keyword);
   var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
   console.log(argList);
   open.then(function(conn) {
