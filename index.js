@@ -23,9 +23,7 @@ app.get('/', (req, res) => {
 
 app.post('/dfs', (req, res)=>{
   console.log(req.body.param);
-  var webargs = JSON.stringify(req.body.param.website); 
-  var deptharg = JSON.stringify(req.body.param.depth);
-  var argList = webargs + ', ' + deptharg;
+  var argList = JSON.stringify(req.body.param);
   console.log(argList);
   open.then(function(conn) {
     var ok = conn.createChannel();
@@ -35,9 +33,6 @@ app.post('/dfs', (req, res)=>{
     });
     return ok;
   }).then(null, console.warn);
-  
-  
-  
 });
 
 
