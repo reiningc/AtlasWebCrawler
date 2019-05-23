@@ -26,7 +26,7 @@ app.post('/dfs', (req, res)=>{
   var webargs = JSON.stringify(req.body.param.website); 
   var deptharg = JSON.stringify(req.body.param.depth);
   var argList = webargs + ', ' + deptharg;
-  console.log(args);
+  console.log(argList);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
