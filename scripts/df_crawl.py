@@ -121,8 +121,8 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
     crawl_data_json = json.dumps(crawl_data, indent=4)
-    crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
-    return 0
+    #crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
+    return crawl_data_json
 
 def df_crawl_with_keyword(starting_URL, page_limit, keyword):
 
