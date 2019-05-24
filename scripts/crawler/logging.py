@@ -2,6 +2,7 @@
 
 import os.path
 import sys
+import boto3
 
 ERROR_LOG_FILENAME = os.path.abspath('logs/error.log')
 CRAWL_LOG_FILENAME = os.path.abspath('logs/crawl.log')
@@ -21,7 +22,11 @@ def log_to_file(message,filename):
         print(f'{filename} - file write failed')
     logfile.close()
 
-def log_error_to_file(message,filename):
+def log_error_to_file(message):
+    s3 = boto3.resource('s3')
+    obj = s3.Object('atlascrawlerlogs','error.log')
+    obj.put(Body=message)
+    """
     try:
         error_logfile = open(filename,'a')
     except:
@@ -35,8 +40,13 @@ def log_error_to_file(message,filename):
         print(f'Error: {e}' )
         print(f'{filename} - file write failed')
     error_logfile.close()
+    """
 
-def log_crawl_to_file(crawl_data, filename):
+def log_crawl_to_file(crawl_data):
+    s3 = boto3.resource('s3')
+    obj = s3.Object('atlascrawlerlogs','crawl.log')
+    obj.put(Body=crawl_data)
+    """
     try:
         crawl_logfile = open(filename,'w')
     except:
@@ -50,3 +60,4 @@ def log_crawl_to_file(crawl_data, filename):
         print(f'Error: {e}' )
         print(f'{filename} - file write failed')
     crawl_logfile.close()
+    """
