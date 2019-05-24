@@ -68,8 +68,8 @@ def request_website(URL):
                 error_message += 'Failed to reach server. Error code: ' + str(err.code) + ': ' + err.reason + '\n'
             elif hasattr(err, 'reason'):
                 error_message += 'Server could not fill the request. Reason: ' + err.reason + '\n'
-            logging.log_to_file(error_message,logging.ERROR_LOG_FILENAME)
-            return -1, 1
+            #logging.log_to_file(error_message,logging.ERROR_LOG_FILENAME)
+            return -1, error_message
         else:
             # opening URL was successful
             # read response from server - this comes in as bytes object and has to be decoded into utf-8
@@ -77,7 +77,7 @@ def request_website(URL):
 
     else:
         error_message = request_URL + ' - robots.txt prevents fetching requested page\n'
-        logging.log_to_file(error_message, logging.ERROR_LOG_FILENAME)
-        return -1, 1
+        #logging.log_to_file(error_message, logging.ERROR_LOG_FILENAME)
+        return -1, error_message
 
     return html, crawl_delay
