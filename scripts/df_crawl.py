@@ -51,6 +51,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     crawled_sites = set()
     site_title = ''
     site_links = set()
+    error_messages = []
     # crawl until we hit page limit
     while pages_crawled < page_limit:
         next_URL_list = []
@@ -82,6 +83,8 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                     raise ValueError('no links')
                 
                 current_URL = next_URL_list[0]
+                error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
+                crawl_delay = 1
 
 
         # get title from webpage
@@ -120,8 +123,12 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
-    crawl_data_json = json.dumps(crawl_data, indent=4)
-    #crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
+    # save errors in log file
+    #crawl_data_json = json.dumps(crawl_data, indent=4)
+    crawl_data_json = json.dumps(crawl_data)
+    crawler.logging.log_crawl_to_file(crawl_data_json)
+    error_data_json = json.dumps(error_messages)
+    crawler.logging.log_error_to_file(error_data_json)
     return crawl_data_json
 
 def df_crawl_with_keyword(starting_URL, page_limit, keyword):
