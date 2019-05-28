@@ -125,7 +125,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
             pages_crawled += 1
         
         time.sleep(crawl_delay)
-    print(uncrawlable_links)
+
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
     # save errors in log file
