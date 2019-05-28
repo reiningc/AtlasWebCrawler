@@ -61,6 +61,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     links_already_seen = set([cleaned_starting_URL])      # all links seen by crawler (even unvisited)
     site_origins = {}               # how crawler reached each site
     uncrawlable_links = set()       # links unable to be reached
+    error_messages = []             # list of error messages encountered - will be logged to error.log
     sites_to_visit = deque()        # queue for links to be visited during breadth-first traversal
     current_level_links = deque()   # queue for nodes on current level - used for adding links to sites_to_visit at end of level
     current_level_links.append(cleaned_starting_URL)
@@ -84,6 +85,8 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
             site_html, crawl_delay = crawler.request.request_website(current_URL)
             if site_html == -1:
                 uncrawlable_links.add(current_URL)
+                error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
+                crawl_delay = 1
             else:
                 # pull site title
                 # pull webpage links (unless this is the last level)
@@ -109,10 +112,12 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     # save crawl in log file
     #for website in crawl_data['nodes']:
     #    website['site_links'] = list(website['site_links'])
-    crawl_data_json = json.dumps(crawl_data, indent=4)
-    crawler.logging.log_crawl_to_file(crawl_data_json, crawler.logging.CRAWL_LOG_FILENAME)
+    crawl_data_json = json.dumps(crawl_data)
+    crawler.logging.log_crawl_to_file(crawl_data_json)
+    error_data_json = json.dumps(error_messages)
+    crawler.logging.log_error_to_file(error_data_json)
 
-    return 0
+    return crawl_data_json
 
 def bf_crawl_with_keyword(starting_URL, breadth_limit, keyword):
 
