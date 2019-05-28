@@ -45,9 +45,6 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
         crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
         return -1
 
-    if keyword is not None:
-        return bf_crawl_with_keyword(starting_URL, breadth_limit, keyword)
-
     current_breadth_level = 0
     keywordFound = False
     site_id_num = 0
@@ -67,7 +64,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     current_level_links.append(cleaned_starting_URL)
     site_origins[cleaned_starting_URL] = None
 
-    while current_breadth_level < breadth_limit:
+    while current_breadth_level < breadth_limit and not keywordFound:
         # load links into nodes to visit queue from the current level's links
         while len(current_level_links) > 0:
             sites_to_visit.append(current_level_links.popleft())
@@ -98,12 +95,21 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
                 add_links_to_site_origin(site_origins,site_id_num,site_links)
                 add_links_to_current_level(current_level_links,site_links)
 
+                # check for keyword on webpage
+                if keyword is not None:
+                    keywordFound = crawler.parseHTML.contains_keyword(site_html, keyword)
+
                 crawl_data['nodes'].append({'id': site_id_num,'name': site_title,'link':current_URL,'keyword':keywordFound})
                 if len(links_already_seen) != 1:
                     crawl_data['links'].append({'source': site_id_num, 'target': site_origins[current_URL]})
                 # add all the new site links to set of links already seen
                 add_links_to_links_already_seen(links_already_seen,site_links)
                 site_id_num += 1
+
+                # if keyword found, stop crawl
+                if keyword is not None and keywordFound:
+                    break
+
                 time.sleep(crawl_delay)
         # Finished crawling current level
         current_breadth_level += 1
@@ -118,11 +124,6 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     crawler.logging.log_error_to_file(error_data_json)
 
     return crawl_data_json
-
-def bf_crawl_with_keyword(starting_URL, breadth_limit, keyword):
-
-    return 0
-
 
 
 bf_crawl(START,LIMIT,KEYWORD)
