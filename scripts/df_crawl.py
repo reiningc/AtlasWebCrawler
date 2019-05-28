@@ -31,9 +31,6 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         error_message = 'Page limit must be at least 1 for depth first crawl.'
         crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
         return -1
-
-    if keyword is not None:
-        return df_crawl_with_keyword(starting_URL, page_limit, keyword)
     
     # count of pages crawled
     pages_crawled = 0
@@ -51,7 +48,8 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     crawled_sites = set()
     site_title = ''
     site_links = set()
-    error_messages = []
+    error_messages = []     # list of error messages encountered - will be logged to error.log
+
     # crawl until we hit page limit
     while pages_crawled < page_limit:
         next_URL_list = []
@@ -91,7 +89,10 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         site_title = crawler.parseHTML.get_page_title(site_html)
         # get all links from webpage
         site_links = crawler.parseHTML.get_all_links(site_html, current_URL, crawl_data.keys())
-        
+        # check for keyword on webpage
+        if keyword is not None:
+            keywordFound = crawler.parseHTML.contains_keyword(site_html, keyword)
+
         crawl_data['nodes'].append({'id': site_id_num, 'name': site_title,'link': current_URL,'keyword': keywordFound})
         # don't add links for first site crawled
         if len(crawled_sites) != 0:
@@ -100,6 +101,10 @@ def df_crawl(starting_URL, page_limit, keyword=None):
 
         last_site_id_num = site_id_num
         site_id_num += 1
+
+        # if keyword found, stop crawl
+        if keyword is not None and keywordFound:
+            break
 
         # randomly choose one of the links to visit next
         
@@ -113,14 +118,14 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         # If no links, error out
         if len(next_URL_list) < 1:
             pages_crawled = page_limit
-            print("length of next_URL_list is < 1 - no links!")
+            error_messages.append(f"Site URL:{current_URL} ==> length of next_URL_list is < 1 - no links!")
             #raise ValueError('No links available')
         else:
             current_URL = next_URL_list[0]
             pages_crawled += 1
         
         time.sleep(crawl_delay)
-    
+    print(uncrawlable_links)
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
     # save errors in log file
@@ -131,8 +136,5 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     crawler.logging.log_error_to_file(error_data_json)
     return crawl_data_json
 
-def df_crawl_with_keyword(starting_URL, page_limit, keyword):
-
-    return 0
 
 #df_crawl(START,LIMIT,KEYWORD)
