@@ -16,11 +16,12 @@ channel.queue_declare(queue='btasks', durable='true')
 channel.queue_bind(exchange='crawl', queue='dtasks', routing_key='dfs')
 channel.queue_bind(exchange='crawl', queue='btasks', routing_key='bfs')
 # create a function which is called on incoming messages
-def callback(ch, method, properties, body):
+def on_request(ch, method, properties, body):
   print ("Received: " + body)
 
 # set up subscription on the queue
-channel.basic_consume(callback, queue='dtasks')
+channel.basic_consume(queue='dtasks', on_message_callback=on_request)
+
 
 channel.start_consuming() # start consuming (blocks)
 
