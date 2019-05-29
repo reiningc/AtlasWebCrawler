@@ -1,6 +1,6 @@
 #! python3.6
-import pika, os, urlparse
-
+import pika, os
+from urllib.parse import urlparse
 # Parse CLODUAMQP_URL (fallback to localhost)
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 url = urlparse.urlparse(url_str)
