@@ -11,8 +11,8 @@ params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
 connection = pika.BlockingConnection(params) # Connect to CloudAMQP
 channel = connection.channel() # start a channel
 channel.exchange_declare(exchange='crawl', exchange_type='direct', durable='true')
-channel.queue_declare(queue='dtasks') # Declare a queue
-channel.queue_declare(queue='btasks')
+channel.queue_declare(queue='dtasks', durable='true') # Declare a queue
+channel.queue_declare(queue='btasks', durable='true')
 channel.queue_bind(exchange='crawl', queue='dtasks', routing_key='dfs')
 channel.queue_bind(exchange='crawl', queue='btasks', routing_key='bfs')
 # create a function which is called on incoming messages
