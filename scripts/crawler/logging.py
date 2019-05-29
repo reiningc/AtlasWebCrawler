@@ -3,6 +3,9 @@
 import os.path
 import sys
 import boto3
+from boto.s3.connection import S3Connection
+
+s3Con = S3Connection(os.environ['AWS_ACCESS_KEY_ID', os.environ('AWS_SECRET_ACCESS_KEY')])
 
 ERROR_LOG_FILENAME = os.path.abspath('logs/error.log')
 CRAWL_LOG_FILENAME = os.path.abspath('logs/crawl.log')
