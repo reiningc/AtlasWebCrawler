@@ -1,5 +1,6 @@
 #! python3.6
 import pika, os
+import threading
 from urllib.parse import urlparse
 # Parse CLODUAMQP_URL (fallback to localhost)
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
@@ -9,7 +10,7 @@ params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
 
 connection = pika.BlockingConnection(params) # Connect to CloudAMQP
 channel = connection.channel() # start a channel
-channel.exchange_declare(exchange='crawl', exchange_type='direct', durable=true)
+channel.exchange_declare(exchange='crawl', exchange_type='direct', durable='true')
 channel.queue_declare(queue='dtasks') # Declare a queue
 channel.queue_declare(queue='btasks')
 channel.queue_bind(exchange='crawl', queue='dtasks', routing_key='dfs')
