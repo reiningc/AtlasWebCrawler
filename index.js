@@ -10,8 +10,9 @@ const port = process.env.PORT || 5000;
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-var q = 'tasks';
-
+var bq = 'btasks'; //bfs queue
+var dq = 'dtasks'; //dfs queue
+var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
@@ -31,8 +32,12 @@ app.post('/dfs', (req, res)=>{
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ch.assertQueue(q);
-      ch.sendToQueue(q, Buffer.from(argList));
+      ok.assertExchange(exchange, 'direct', { durable: true });
+      ch.assertQueue(dq);
+      ch.bindQueue(dq, exchange, 'dfs');
+      ch.publish(exchange, 'dfs', Buffer.from(argList));
+      //ch.sendToQueue(q, Buffer.from(argList));
+      
     });
     return ok;
   }).then(null, console.warn);
@@ -40,8 +45,25 @@ app.post('/dfs', (req, res)=>{
 
 
 app.post('/bfs', (req, res)=>{
-  
   console.log(req.body.website);
+  var weba = JSON.stringify(req.body.param.website);
+  var depa = req.body.param.depth;
+  var key = JSON.stringify(req.body.param.keyword);
+  var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
+  console.log(argList);
+  open.then(function(conn) {
+    var ok = conn.createChannel();
+    ok = ok.then(function(ch) {
+      ok.assertExchange(exchange, 'direct', { durable: true });
+      ch.assertQueue(bq);
+      ch.bindQueue(bq, exchange, 'bfs');
+      ch.publish(exchange, 'bfs', Buffer.from(argList));
+      //ch.sendToQueue(q, Buffer.from(argList));
+
+    });
+    return ok;
+  }).then(null, console.warn);
+});
   
   
   
