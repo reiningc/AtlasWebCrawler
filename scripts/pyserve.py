@@ -20,7 +20,7 @@ def callback(ch, method, properties, body):
   print ("Received: " + body)
 
 # set up subscription on the queue
-channel.basic_consume(queue='dtasks', callback)
+channel.basic_consume(callback, queue='dtasks')
 
 channel.start_consuming() # start consuming (blocks)
 
