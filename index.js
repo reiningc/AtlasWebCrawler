@@ -37,7 +37,7 @@ app.post('/dfs', (req, res)=>{
       ch.bindQueue(dq, exchange, 'dfs');
       ch.publish(exchange, 'dfs', Buffer.from(argList));
       //ch.sendToQueue(q, Buffer.from(argList));
-      
+
     });
     return ok;
   }).then(null, console.warn);
@@ -63,10 +63,6 @@ app.post('/bfs', (req, res)=>{
     });
     return ok;
   }).then(null, console.warn);
-});
-  
-  
-  
 });
 
 

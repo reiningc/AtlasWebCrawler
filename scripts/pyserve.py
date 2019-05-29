@@ -6,7 +6,7 @@ from kombu import Connection, Exchange, Queue, Consumer
 import df_crawl
 
 exch = Exchange("crawl", type="direct")
-crawl_queue = Queue('dtasks', exch, 'dfs')
+crawl_queue = Queue(name='dtasks', exchange=exch, routing_key='dfs')
 
 print("pyserve: starting connection to cloudamqp ... ")
 rabbit_url = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
