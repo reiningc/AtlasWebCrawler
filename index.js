@@ -22,30 +22,31 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/dfs', (req, res)=>{
-  console.log(req.body.param);
+app.post('/', (req, res)=>{
+  console.log("dfs request: " + req.body.param.website);
   var weba = JSON.stringify(req.body.param.website);
   var depa = req.body.param.depth;
   var key = JSON.stringify(req.body.param.keyword);
+  var qkee = JSON.stringify(req.body.param.searchType);
   var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
   console.log(argList);
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ok.assertExchange(exchange, 'direct', { durable: true });
+      ch.assertExchange(exchange, 'direct', { durable: true });
       ch.assertQueue(dq);
+      ch.assertQueue(bq);
       ch.bindQueue(dq, exchange, 'dfs');
-      ch.publish(exchange, 'dfs', Buffer.from(argList));
-      //ch.sendToQueue(q, Buffer.from(argList));
-
+      ch.bindQueue(bq, exchange, 'bfs');
+      ch.publish(exchange, qkee, Buffer.from(argList));
     });
     return ok;
   }).then(null, console.warn);
 });
 
 
-app.post('/bfs', (req, res)=>{
-  console.log(req.body.website);
+/*app.post('/bfs', (req, res)=>{
+  console.log("bfs request: " + req.body.param.website);
   var weba = JSON.stringify(req.body.param.website);
   var depa = req.body.param.depth;
   var key = JSON.stringify(req.body.param.keyword);
@@ -54,7 +55,7 @@ app.post('/bfs', (req, res)=>{
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ok.assertExchange(exchange, 'direct', { durable: true });
+      ch.assertExchange(exchange, 'direct', { durable: true });
       ch.assertQueue(bq);
       ch.bindQueue(bq, exchange, 'bfs');
       ch.publish(exchange, 'bfs', Buffer.from(argList));
@@ -63,7 +64,7 @@ app.post('/bfs', (req, res)=>{
     });
     return ok;
   }).then(null, console.warn);
-});
+});*/
 
 
 if (process.env.NODE_ENV === 'production') {
