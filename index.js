@@ -34,10 +34,7 @@ app.post('/', (req, res)=>{
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.assertExchange(exchange, 'direct', { durable: true });
-      ch.assertQueue(dq);
-      ch.assertQueue(bq);
-      ch.bindQueue(dq, exchange, 'dfs');
-      ch.bindQueue(bq, exchange, 'bfs');
+      
       ch.publish(exchange, qkee, Buffer.from(argList));
     });
     return ok;
@@ -45,26 +42,7 @@ app.post('/', (req, res)=>{
 });
 
 
-/*app.post('/bfs', (req, res)=>{
-  console.log("bfs request: " + req.body.param.website);
-  var weba = JSON.stringify(req.body.param.website);
-  var depa = req.body.param.depth;
-  var key = JSON.stringify(req.body.param.keyword);
-  var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
-  console.log(argList);
-  open.then(function(conn) {
-    var ok = conn.createChannel();
-    ok = ok.then(function(ch) {
-      ch.assertExchange(exchange, 'direct', { durable: true });
-      ch.assertQueue(bq);
-      ch.bindQueue(bq, exchange, 'bfs');
-      ch.publish(exchange, 'bfs', Buffer.from(argList));
-      //ch.sendToQueue(q, Buffer.from(argList));
 
-    });
-    return ok;
-  }).then(null, console.warn);
-});*/
 
 
 if (process.env.NODE_ENV === 'production') {
