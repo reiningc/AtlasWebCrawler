@@ -13,14 +13,19 @@ params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
 
 connection = pika.BlockingConnection(params) # Connect to CloudAMQP
 channel = connection.channel() # start a channel
-channel.exchange_declare(exchange='crawl', exchange_type='direct', durable='true')
+
 channel.queue_declare(queue='dfs', durable='true') # Declare a queue
 channel.queue_declare(queue='bfs', durable='true')
-channel.queue_bind(exchange='crawl', queue='dfs', routing_key='dfs')
-channel.queue_bind(exchange='crawl', queue='bfs', routing_key='bfs')
 # create a function which is called on incoming messages
 def on_request(ch, method, properties, body):
   print (body)
+  result = 'success'
+  ch.basic_publish(exchange='',
+                     routing_key=properties.reply_to,
+                     properties=pika.BasicProperties(correlation_id = \
+                                                         properties.correlation_id),
+                     body=result)
+ ch.basic_ack(delivery_tag=method.delivery_tag)
 
 # set up subscription on the queue
 channel.basic_consume(queue='dfs', on_message_callback=on_request)
