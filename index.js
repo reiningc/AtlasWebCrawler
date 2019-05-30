@@ -10,8 +10,6 @@ const port = process.env.PORT || 5000;
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-var bq = 'btasks'; //bfs queue
-var dq = 'dtasks'; //dfs queue
 var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
@@ -34,7 +32,7 @@ app.post('/', (req, res)=>{
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ch.assertQueue(dq);
+      ch.assertQueue('dfs');
       ch.assertExchange('crawl', 'direct', {durable: true});
       ch.publish('crawl', 'qkee', Buffer.from(argList));
     });
