@@ -39,7 +39,7 @@ app.post('/', (req, res)=>{
       });
       ch.assertQueue('dfs');
       ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
-
+      
     });
     return ok;
   }).then(null, console.warn);

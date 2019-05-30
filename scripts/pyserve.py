@@ -20,12 +20,8 @@ channel.queue_declare(queue='bfs', durable='true')
 def on_request(ch, method, properties, body):
   print (body)
   result = 'success'
-  ch.basic_publish(exchange='',
-                     routing_key=properties.reply_to,
-                     properties=pika.BasicProperties(correlation_id = \
-                                                         properties.correlation_id),
-                     body=result)
- ch.basic_ack(delivery_tag=method.delivery_tag)
+  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=result)
+    
 
 # set up subscription on the queue
 channel.basic_consume(queue='dfs', on_message_callback=on_request)
