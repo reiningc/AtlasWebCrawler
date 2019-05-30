@@ -34,12 +34,13 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('got reply');
+        res.send(msg.body);
       }, {
         noAck: true
       });
       ch.assertQueue('dfs');
       ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
-      
+
     });
     return ok;
   }).then(null, console.warn);

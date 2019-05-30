@@ -3,7 +3,7 @@ import pika, os
 import threading
 from urllib.parse import urlparse
 import json
-#import df_crawl
+import df_crawl
 import bf_crawl
 # Parse CLODUAMQP_URL (fallback to localhost)
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
@@ -23,7 +23,7 @@ def on_request(ch, method, properties, body):
   site = args["website"]
   dep = args["depth"]
   results = df_crawl.df_crawl(site, dep)
-  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=result)
+  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
     
 
 # set up subscription on the queue
