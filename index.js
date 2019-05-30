@@ -30,16 +30,17 @@ app.post('/', (req, res)=>{
   var qkee = JSON.stringify(req.body.param.searchType);
   var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
   console.log(argList);
-
+  if(qkee == 'dfs'){
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.assertQueue(dq);
-      ch.assertExchange(exchange, 'direct', {durable: true});
-      ch.publish(exchange, 'qkee', Buffer.from(argList));
+      ch.assertExchange('crawl', 'direct', {durable: true});
+      ch.publish('crawl', 'qkee', Buffer.from(argList));
     });
     return ok;
   }).then(null, console.warn);
+}
 });
 
 
