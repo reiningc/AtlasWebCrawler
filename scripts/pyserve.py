@@ -22,7 +22,7 @@ def on_request(ch, method, properties, body):
   print ("Received: " + body)
 
 # set up subscription on the queue
-channel.basic_consume(queue='dtasks', on_message_callback=on_request)
+channel.basic_consume(queue='dfs', on_message_callback=on_request)
 
 
 channel.start_consuming() # start consuming (blocks)

@@ -16,7 +16,6 @@ var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
-
 // create a GET route
 app.get('/', (req, res) => {
   res.render("index.html");
@@ -33,12 +32,14 @@ app.post('/', (req, res)=>{
   console.log(argList);
 
   open.then(function(conn) {
-    return conn.createChannel();
-  }).then(function(ch) {
-    return ch.assertQueue(dq).then(function(ok) {
-      return ch.publish('crawl', qkee, Buffer.from(argList));
+    var ok = conn.createChannel();
+    ok = ok.then(function(ch) {
+      ch.assertQueue(dq);
+      ch.assertExchange(exchange, 'direct', {durable: true});
+      ch.publish(exchange, 'qkee', Buffer.from(argList));
     });
-  }).catch(console.warn);
+    return ok;
+  }).then(null, console.warn);
 });
 
 
