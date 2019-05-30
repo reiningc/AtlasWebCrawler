@@ -2,6 +2,7 @@
 import pika, os
 import threading
 from urllib.parse import urlparse
+import json
 #import df_crawl
 #import bf_crawl
 # Parse CLODUAMQP_URL (fallback to localhost)
@@ -19,7 +20,7 @@ channel.queue_bind(exchange='crawl', queue='dfs', routing_key='dfs')
 channel.queue_bind(exchange='crawl', queue='bfs', routing_key='bfs')
 # create a function which is called on incoming messages
 def on_request(ch, method, properties, body):
-  print ("Received: " + body)
+  print (body)
 
 # set up subscription on the queue
 channel.basic_consume(queue='dfs', on_message_callback=on_request)
