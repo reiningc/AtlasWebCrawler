@@ -32,18 +32,18 @@ app.post('/', (req, res)=>{
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ch.consume(amq.rabbitmq.reply-to, function(msg) {
+      ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('got reply');
       }, {
         noAck: true
       });
       ch.assertQueue('dfs');
-      ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: amq.rabbitmq.reply-to});
+      ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
 
     });
     return ok;
   }).then(null, console.warn);
-  console.log("past send to queue");
+  
 
 });
 
