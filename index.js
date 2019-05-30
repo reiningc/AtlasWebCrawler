@@ -10,8 +10,7 @@ const port = process.env.PORT || 5000;
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-var q = 'tasks';
-
+var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
@@ -21,31 +20,36 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/dfs', (req, res)=>{
-  console.log(req.body.param);
+app.post('/', (req, res)=>{
+  console.log("dfs request: " + req.body.param.website);
   var weba = JSON.stringify(req.body.param.website);
   var depa = req.body.param.depth;
   var key = JSON.stringify(req.body.param.keyword);
+  var qkee = JSON.stringify(req.body.param.searchType);
   var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
   console.log(argList);
+
   open.then(function(conn) {
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
-      ch.assertQueue(q);
-      ch.sendToQueue(q, Buffer.from(argList));
+      ch.consume('amq.rabbitmq.reply-to', function(msg) {
+        console.log('got reply');
+        res.send(msg.body);
+      }, {
+        noAck: true
+      });
+      ch.assertQueue('dfs');
+      ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
+
     });
     return ok;
   }).then(null, console.warn);
+  
+
 });
 
 
-app.post('/bfs', (req, res)=>{
-  
-  console.log(req.body.website);
-  
-  
-  
-});
+
 
 
 if (process.env.NODE_ENV === 'production') {

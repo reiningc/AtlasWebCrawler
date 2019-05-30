@@ -63,7 +63,7 @@ class InputForm extends Component {
         //         )
         
         
-        fetch('/' + param.searchType, {
+        fetch('/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
