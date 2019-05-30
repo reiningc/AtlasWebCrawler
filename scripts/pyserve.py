@@ -2,8 +2,8 @@
 import pika, os
 import threading
 from urllib.parse import urlparse
-import df_crawl
-import bf_crawl
+#import df_crawl
+#import bf_crawl
 # Parse CLODUAMQP_URL (fallback to localhost)
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 url = urlparse(url_str)
