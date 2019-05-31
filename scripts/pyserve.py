@@ -18,7 +18,7 @@ channel.queue_declare(queue='dfs', durable='true') # Declare a queue
 channel.queue_declare(queue='bfs', durable='true')
 # create a function which is called on incoming messages
 def on_request(ch, method, properties, body):
-  print (body)
+  print ('pyserve.py received request body: ',body)
   args = json.loads(body)
   site = args["website"]
   dep = args["depth"]
@@ -29,9 +29,9 @@ def on_request(ch, method, properties, body):
 # set up subscription on the queue
 channel.basic_consume(queue='dfs', on_message_callback=on_request)
 
-
+print('pyserve.py starts consuming')
 channel.start_consuming() # start consuming (blocks)
-
+print('pyserve.py finished consuming')
 
 
 
