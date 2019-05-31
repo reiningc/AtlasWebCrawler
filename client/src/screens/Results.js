@@ -38,9 +38,7 @@ class Results extends Component {
     }
     getResults = () => {
 
-        if(this.props.history.location.state.param.searchType === "bfs")
-        {
-            fetch('http://localhost:5000/bfs', {
+        fetch('/', {
                 method: 'POST',
                 // params passed in through history props
                 body: this.props.history.location.state.param
@@ -55,24 +53,6 @@ class Results extends Component {
             ).catch(error =>
                 console.log(error)
             )
-        }
-        else{
-            fetch('http://localhost:5000/dfs', {
-                method: 'POST',
-                // params passed in through history props
-                body: this.props.history.location.state.param
-            }).then((response)=>
-                response.json()
-            ).then(data=>(
-                // console.log(data)
-                // fix this once getting data formatted correctly from api
-                // this.setState({data: data, loading: false})
-                this.setState({loading: false})
-                )
-            ).catch(error =>
-                console.log(error)
-            )
-        }
     }
     
     componentDidMount = () =>{
