@@ -24,6 +24,7 @@ def on_request(ch, method, properties, body):
   dep = args["depth"]
   results = df_crawl.df_crawl(site, dep)
   ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
+  ch.basic_ack(delivery_tag=method.delivery_tag)
     
 
 # set up subscription on the queue
