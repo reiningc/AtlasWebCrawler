@@ -41,7 +41,10 @@ class Results extends Component {
         fetch('/', {
                 method: 'POST',
                 // params passed in through history props
-                body: this.props.history.location.state.param
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.props.history.location.state.param)
             }).then((response)=>
                 response.json()
             ).then(data=>(
