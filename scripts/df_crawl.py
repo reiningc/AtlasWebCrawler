@@ -77,7 +77,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                 # If no links, error out
                 if len(next_URL_list) < 1:
                     pages_crawled = page_limit
-                    error_message = f"{currentURL}: no accessible links!"
+                    error_message = f"{current_URL}: no accessible links!"
                     print(error_message)
                     error_messages.append(error_message)
                 
