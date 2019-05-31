@@ -69,7 +69,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                     error_message = f'Depth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
                     print(error_message)
                     crawler.logging.log_error_to_file(error_message)
-                    return -1
+                    return error_message # returning error message so pika can handle return value (previously returned -1)
 
                 # Prevent cycles by avoiding visited links
                 if len(site_links) > 1:
