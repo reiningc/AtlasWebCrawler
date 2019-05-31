@@ -38,7 +38,8 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     site_id_num = 0
     last_site_id_num = None
     # start at starting URL
-    current_URL = starting_URL
+    cleaned_starting_URL = crawler.request.prepare_URL_for_crawl(starting_URL)
+    current_URL = cleaned_starting_URL
 
     uncrawlable_links = set()
     crawl_delay = 1
@@ -56,11 +57,6 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         site_html = -1
         # look for good URL to crawl from list of URLs 
         while current_URL in uncrawlable_links or site_html == -1:
-            if starting_URL in uncrawlable_links:
-                error_message = f'Depth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
-                crawler.logging.log_error_to_file(error_message)
-                return -1
-
             # add scheme to URL if needed
             current_URL = crawler.request.prepare_URL_for_crawl(current_URL)
             # request html webpage
@@ -68,6 +64,13 @@ def df_crawl(starting_URL, page_limit, keyword=None):
             # if request_website returns -1, it means site was unable to be read
             if site_html == -1:
                 uncrawlable_links.add(current_URL)
+                # Exit if starting URL is uncrawlable
+                if cleaned_starting_URL in uncrawlable_links:
+                    error_message = f'Depth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
+                    print(error_message)
+                    crawler.logging.log_error_to_file(error_message)
+                    return -1
+
                 # Prevent cycles by avoiding visited links
                 if len(site_links) > 1:
                     next_URL_list = random.sample(site_links,k=1)
@@ -81,7 +84,8 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                     print(error_message)
                     error_messages.append(error_message)
                 
-                current_URL = next_URL_list[0]
+                if next_URL_list:
+                    current_URL = next_URL_list[0]
                 error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
                 crawl_delay = 1
 
