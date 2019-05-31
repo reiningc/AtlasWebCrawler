@@ -21,12 +21,13 @@ app.get('/', (req, res) => {
 
 
 app.post('/', (req, res)=>{
-  console.log("dfs request: " + req.body.param.website);
+  console.log(req.body);
+  //console.log("request: " + req.body.param.website);
   var weba = JSON.stringify(req.body.param.website);
   var depa = req.body.param.depth;
   var key = JSON.stringify(req.body.param.keyword);
   var qkee = JSON.stringify(req.body.param.searchType);
-  var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + '}';
+  var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + ', "searchType":' + qkee +'}';
   console.log(argList);
 
   open.then(function(conn) {
@@ -38,8 +39,8 @@ app.post('/', (req, res)=>{
       }, {
         noAck: true
       });
-      ch.assertQueue('dfs');
-      ch.sendToQueue('dfs', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
+      ch.assertQueue('search');
+      ch.sendToQueue('search', Buffer.from(argList), {replyTo: 'amq.rabbitmq.reply-to'});
 
     });
     return ok;
