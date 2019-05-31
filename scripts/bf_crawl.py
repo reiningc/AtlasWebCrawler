@@ -17,14 +17,14 @@ import os.path
 from collections import deque
 
 KEYWORD = None
-if len(sys.argv) < 3:
-    raise ValueError('Not enough arguments. Include starting URL and breadth limit.')
-elif len(sys.argv) > 4:
-    raise ValueError('Too many arguments. Include starting URL, page limit, and keyword (optional).')
-elif len(sys.argv) == 4:
-    KEYWORD = sys.argv[3]
-START = sys.argv[1]
-LIMIT = int(sys.argv[2])
+#if len(sys.argv) < 3:
+#    raise ValueError('Not enough arguments. Include starting URL and breadth limit.')
+#elif len(sys.argv) > 4:
+#    raise ValueError('Too many arguments. Include starting URL, page limit, and keyword (optional).')
+#elif len(sys.argv) == 4:
+#    KEYWORD = sys.argv[3]
+#START = sys.argv[1]
+#LIMIT = int(sys.argv[2])
 
 def add_links_to_links_already_seen(seen_links, new_links):
     for link in new_links:
@@ -126,4 +126,4 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     return crawl_data_json
 
 
-bf_crawl(START,LIMIT,KEYWORD)
+#bf_crawl(START,LIMIT,KEYWORD)
