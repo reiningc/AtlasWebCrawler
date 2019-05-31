@@ -34,8 +34,8 @@ app.post('/', (req, res)=>{
     var ok = conn.createChannel();
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
-        console.log('got reply');
-        res.send(msg.body);
+        console.log('reply: ' + msg.content);
+        res.send(msg.content);
       }, {
         noAck: true
       });
