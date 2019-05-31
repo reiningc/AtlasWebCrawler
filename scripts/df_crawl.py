@@ -58,7 +58,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
         while current_URL in uncrawlable_links or site_html == -1:
             if starting_URL in uncrawlable_links:
                 error_message = f'Depth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
-                crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
+                crawler.logging.log_error_to_file(error_message)
                 return -1
 
             # add scheme to URL if needed
@@ -77,8 +77,9 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                 # If no links, error out
                 if len(next_URL_list) < 1:
                     pages_crawled = page_limit
-                    print("no links!")
-                    raise ValueError('no links')
+                    error_message = f"{currentURL}: no accessible links!"
+                    print(error_message)
+                    error_messages.append(error_message)
                 
                 current_URL = next_URL_list[0]
                 error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
