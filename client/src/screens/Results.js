@@ -50,8 +50,8 @@ class Results extends Component {
             ).then(data=>(
                 // console.log(data)
                 // fix this once getting data formatted correctly from api
-                // this.setState({data: data, loading: false})
-                this.setState({loading: false})
+                this.setState({data: data, loading: false})
+                //this.setState({loading: false})
                 )
             ).catch(error =>
                 console.log(error)
