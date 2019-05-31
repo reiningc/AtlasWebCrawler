@@ -23,10 +23,10 @@ app.get('/', (req, res) => {
 app.post('/', (req, res)=>{
   console.log(req.body);
   //console.log("request: " + req.body.param.website);
-  var weba = JSON.stringify(req.body.param.website);
-  var depa = req.body.param.depth;
-  var key = JSON.stringify(req.body.param.keyword);
-  var qkee = JSON.stringify(req.body.param.searchType);
+  var weba = JSON.stringify(req.body.website);
+  var depa = req.body.depth;
+  var key = JSON.stringify(req.body.keyword);
+  var qkee = JSON.stringify(req.body.searchType);
   var argList = '{ "website":' + weba + ', "depth":' + depa + ', "keyword":' + key + ', "searchType":' + qkee +'}';
   console.log(argList);
 
