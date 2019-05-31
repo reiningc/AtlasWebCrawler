@@ -35,6 +35,7 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
+        console.log(msg.body);
         res.send(msg.content);
       }, {
         noAck: true
