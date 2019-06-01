@@ -21,8 +21,6 @@ app.get('/', (req, res) => {
 
 
 app.post('/', (req, res)=>{
-  console.log(req.body);
-  //console.log("request: " + req.body.param.website);
   var weba = JSON.stringify(req.body.website);
   var depa = req.body.depth;
   var key = JSON.stringify(req.body.keyword);
@@ -35,7 +33,6 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
-        console.log(msg.body);
         res.send(msg.content);
       }, {
         noAck: true
