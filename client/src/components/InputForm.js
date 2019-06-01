@@ -13,15 +13,13 @@ class InputForm extends Component {
             searchType: "bfs",
             depth: 0,
             keyword: "",
+            prevSearches: [],
+            displayCreateCrawl: true,
+            displayPrevCrawls: false,
+            apiParam: {}
         };
     }
-    
-    //   componentDidMount() {
-    //     // Call our fetch function below once the component mounts
-    //   this.callBackendAPI()
-    //     .then(res => this.setState({ data: res.express }))
-    //     .catch(err => console.log(err));
-    // }
+
       // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
     // callBackendAPI = async () => {
     //   const response = await fetch('/express_backend');
@@ -32,37 +30,46 @@ class InputForm extends Component {
     //   }
     //   return body;
     // };
+
     callBackendAPI= () => {
 
+        
         let param = {};
         param["website"] = this.state.website;
         param["searchType"] = this.state.searchType;
         param["depth"] = this.state.depth;
         param["keyword"] = this.state.keyword;
-        
-        // return <Results param={param}/>
 
-        // let results={}
 
-        // fetch('http://localhost:5000/', {
-        //     method: 'POST',
-        //     body: param
-        // }).then((response)=>
-        //     response.json()
-        // ).then(data=>
+        let oldCrawls = localStorage.getItem('previousCrawls')
 
-        //     // console.log(data)
-        //     // results = Object.assign({}, data)
-        //     this.setState({data: data})
-        //     // results=data
+        //if it is empty just add new search
+        if( oldCrawls == null)
+        {
+            let newSearch = param
+            let prevSearch = []
+            prevSearch.push(newSearch)
+            localStorage.setItem("previousCrawls", JSON.stringify(prevSearch))
+        }
+        // if not empty add new to old
+        else {
+            // add new crawl
+            let oldCrawlList = JSON.parse(localStorage.getItem("previousCrawls"))
+            let newSearch = param
+            oldCrawlList.push(newSearch)
+            // set to local storage
+            localStorage.setItem("previousCrawls", JSON.stringify(oldCrawlList))
+        }
 
-            
-            
-        //     ).catch(error =>
-        //         console.log(error)
-        //         )
-        
+        // go to new page
         history.push('/results', {param})
+    }
+    callBackendAPIPrevSearch = () => {
+        let param = this.state.apiParam
+        // only makes the api call if a search is selected
+        if(Object.keys(param).length !== 0)
+            // go to new page
+            history.push('/results', {param})
     }
     
     setWebsite=(e)=> {
@@ -81,74 +88,182 @@ class InputForm extends Component {
         this.setState({keyword: e.target.value});
     }
 
+    toggleCreateCrawl = () => {
+        let prevState = this.state.displayCreateCrawl
+        let prevCrawls = this.state.displayPrevCrawls
+        this.setState({displayCreateCrawl: !prevState, displayPrevCrawls: !prevCrawls})
+    }
+    togglePrevCrawls = () => {
+        let prevCrawls = this.state.displayPrevCrawls
+        let prevState = this.state.displayCreateCrawl
+        this.setState({displayPrevCrawls: !prevCrawls, displayCreateCrawl: !prevState})
+    }
+
+    setParam = (prevCrawl) => {
+        this.setState({apiParam: prevCrawl})
+    }
+
+    displayPrevCrawls = () =>{
+        // get previous crawls
+        let oldCrawlList = JSON.parse(localStorage.getItem("previousCrawls"))
+
+        // no previous crawls
+        if( oldCrawlList == null)
+            return <div style={{width: "200px", height: "200px", margin: "0 auto"}}>
+                    <h2>No previous Searchs</h2>
+                </div>
+        else{
+            
+            return <div className="container">
+                <div className="row" style={{paddingBottom: "3%"}}>
+                        <div className="col-sm"><h3></h3></div>
+                        <div className="col-sm"><h3>Website</h3></div>
+                        <div className="col-sm"><h3>Search Type</h3></div>
+                        <div className="col-sm"><h3>Depth</h3></div>
+                        <div className="col-sm"><h3>Keyword</h3></div>
+                </div>
+                <fieldset class="form-group">
+                {            
+                    oldCrawlList.map((search) => 
+                    (                    
+                        <div class="">
+                                <div className="row" style={{paddingBottom: "2%"}}>
+                                    <div className="col-sm">
+                                        <input  type="radio" name="gridRadios" id="gridRadios1" value="option1" required onClick={()=> this.setParam(search)}></input>
+                                    </div>
+                                    <div className="col-sm">{search.website}</div>
+                                    <div className="col-sm">{search.searchType}</div>
+                                    <div className="col-sm">{search.depth}</div>
+                                    <div className="col-sm">{search.keyword}</div>
+                                </div>
+                                
+                        </div>
+                    )
+                    )
+                }
+                </fieldset>
+
+                {/* submit button */}
+                <div className="row">
+                    <div className="col-sm"></div>
+                    <div className="col-sm">
+                        <button type="submit" onClick={()=>this.callBackendAPIPrevSearch()}className="btn btn-primary">Submit</button>
+                    </div>
+                    <div className="col-sm"></div>
+
+                </div>
+            </div> 
+
+        }
+    }
+
   render() {
     return (
       <div>
         {/* input form */}
         {/* <form action="http://localhost:5000" method="post" className="container"> */}
-        <form className="container">
+        <div style={{ padding: " 2% 2% 2% 2%", width: "100%", height: "100%"}}>
 
+            <ul className="nav nav-tabs">
+                <li className="nav-item">
+                    <button
+                        className={
+                            this.state.displayCreateCrawl?
+                            "btn nav-link active"
+                            :
+                            "btn nav-link"
+                        }
 
-            {/* starting address */}
-            <div className="form-group row">
-                <div className="col-sm">
-                    <label>Starting address for crawl:</label>
+                    onClick={()=> this.toggleCreateCrawl()}>Create Crawl</button>
+                </li>
+                <li className="nav-item">
+                    <button
+                    className={
+                        this.state.displayPrevCrawls ?
+                        "btn nav-link active"
+                        :
+                        "btn nav-link"
+                    }
+                    onClick={ ()=> this.togglePrevCrawls()}
+                    >Previous Crawls</button>
+                </li>
+            </ul>
+        {
+            this.state.displayCreateCrawl ?
+        
+            <form className="container" style={{paddingTop: "5%"}}>
+                {/* starting address */}
+                <div className="form-group row">
+                    <div className="col-sm">
+                        <label>Starting address for crawl:</label>
+                    </div>
+                    <div className="col-sm">
+                        <input type="url" required className="form-control col-xs-4" name="website" onChange={(e)=>this.setWebsite(e)}/>
+                    </div>
                 </div>
-                <div className="col-sm">
-                    <input type="url" className="form-control col-xs-4" name="website" onChange={(e)=>this.setWebsite(e)}/>
-                </div>
-            </div>
 
-            {/* type of search */}
-            <div className="form-group">
+                {/* type of search */}
+                <div className="form-group">
+                    <div className="row">
+                        <div className="col-md">
+                            <label className="radio-inline">Select Search Type:</label>
+                        </div>
+                        <div className="col-md">
+                            <input type="radio" name="optradio" style={{marginRight: "25px"}} value="bfs" defaultChecked onChange={(e)=>this.setSearchType(e)}/> 
+                            <label className=""> Breadth First Search</label>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md"></div>
+                        <div className="col-md">
+                            <input type="radio" name="optradio" style={{marginRight: "36px"}} value="dfs" onChange={(e)=>this.setSearchType(e)}/> 
+                            <label className=""> Depth First Search</label>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Max number of links */}
+                <div className="form-group row">
+                    <div className="col-sm">
+                        <label >Select Maximum Number of Links to Follow: </label>
+                    </div>
+                    <div className="col-sm">
+                        <input type="number" required className="col-xs-4" name="depth" min="0" onChange={(e)=>this.setDepth(e)}/>
+                    </div>
+                </div>
+
+                {/* Key word */}
+                <div className="form-group row">
+                    <div className="col-sm">
+                        <label >Enter a word that when encountered will stop crawl:</label>
+                    </div>
+                    <div className="col-sm">
+                        <input type="text" className="col-xs-4" name="keyword" onChange={(e)=>this.setKeyWord(e)}/>
+                    </div>
+                </div>
+
+                {/* submit button */}
                 <div className="row">
-                    <div className="col-md">
-                        <label className="radio-inline">Select Search Type:</label>
+                    <div className="col-sm"></div>
+                    <div className="col-sm">
+                        <button type="submit" onClick={()=>this.callBackendAPI()}className="btn btn-primary">Submit</button>
                     </div>
-                    <div className="col-md">
-                        <input type="radio" name="optradio" style={{marginRight: "25px"}} value="bfs" defaultChecked onChange={(e)=>this.setSearchType(e)}/> 
-                        <label className=""> Breadth First Search</label>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md"></div>
-                    <div className="col-md">
-                        <input type="radio" name="optradio" style={{marginRight: "36px"}} value="dfs" onChange={(e)=>this.setSearchType(e)}/> 
-                        <label className=""> Depth First Search</label>
-                    </div>
-                </div>
-            </div>
+                    <div className="col-sm"></div>
 
-            {/* Max number of links */}
-            <div className="form-group row">
-                <div className="col-sm">
-                    <label >Select Maximum Number of Links to Follow: </label>
                 </div>
-                <div className="col-sm">
-                    <input type="number" className="col-xs-4" name="depth" min="0" onChange={(e)=>this.setDepth(e)}/>
-                </div>
+            </form>
+            :
+            null
+        }
+        {
+            this.state.displayPrevCrawls ?
+            <div className="container " style={{paddingTop: "5%"}}>
+                {this.displayPrevCrawls()}
             </div>
-
-            {/* Key word */}
-            <div className="form-group row">
-                <div className="col-sm">
-                    <label >Enter a word that when encountered will stop crawl:</label>
-                </div>
-                <div className="col-sm">
-                    <input type="text" className="col-xs-4" name="keyword" onChange={(e)=>this.setKeyWord(e)}/>
-                </div>
-            </div>
-
-            {/* submit button */}
-            <div className="row">
-                <div className="col-sm"></div>
-                <div className="col-sm">
-                    <button type="submit" onClick={()=>this.callBackendAPI()}className="btn btn-primary">Submit</button>
-                </div>
-                <div className="col-sm"></div>
-
-            </div>
-        </form>
+            :
+            null
+        }
+        </div>
       </div>
     )
   }

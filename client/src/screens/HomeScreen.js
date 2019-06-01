@@ -14,6 +14,7 @@ export class HomeScreen extends Component {
         backgroundPosition: "cover",
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
+        backgroundAttachment: "fixed"
         }}>
         <div style={{height: "100%", paddingTop: "9%", paddingBottom: "20%", paddingLeft: "15%", paddingRight: "15%"}}>
           <div style={{
