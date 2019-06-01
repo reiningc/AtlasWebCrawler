@@ -16,6 +16,7 @@ import sys
 import os.path
 from collections import deque
 
+DEFAULT_CRAWL_DELAY = 0.5
 KEYWORD = None
 #if len(sys.argv) < 3:
 #    raise ValueError('Not enough arguments. Include starting URL and breadth limit.')
@@ -49,7 +50,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     keywordFound = False
     site_id_num = 0
     cleaned_starting_URL = crawler.request.prepare_URL_for_crawl(starting_URL)
-    crawl_delay = 1
+    crawl_delay = DEFAULT_CRAWL_DELAY
     site_title = ''
     site_links = set()
     crawl_data = {}                 # crawl_data will be stored in crawl.log at end of crawl
@@ -83,7 +84,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
             if site_html == -1:
                 uncrawlable_links.add(current_URL)
                 error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
-                crawl_delay = 1
+                crawl_delay = DEFAULT_CRAWL_DELAY
             else:
                 # pull site title
                 # pull webpage links (unless this is the last level)
@@ -116,8 +117,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
 
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
-    #for website in crawl_data['nodes']:
-    #    website['site_links'] = list(website['site_links'])
+
     crawl_data_json = json.dumps(crawl_data)
     crawler.logging.log_crawl_to_file(crawl_data_json)
     error_data_json = json.dumps(error_messages)

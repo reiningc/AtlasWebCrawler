@@ -15,6 +15,7 @@ import json
 import sys
 import os.path
 
+DEFAULT_CRAWL_DELAY = 0.5
 KEYWORD = None
 #if len(sys.argv) < 3:
     #raise ValueError('Not enough arguments. Include starting URL and page limit.')
@@ -42,7 +43,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     current_URL = cleaned_starting_URL
 
     uncrawlable_links = set()
-    crawl_delay = 1
+    crawl_delay = DEFAULT_CRAWL_DELAY
     crawl_data = {}
     crawl_data['nodes'] = []
     crawl_data['links'] = []
@@ -87,7 +88,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
                 if next_URL_list:
                     current_URL = next_URL_list[0]
                 error_messages.append(crawl_delay) # if error, the error message is returned as crawl_delay from request_website()
-                crawl_delay = 1
+                crawl_delay = DEFAULT_CRAWL_DELAY
 
 
         # get title from webpage
@@ -134,7 +135,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     # convert sets of links in crawl_data to lists for json conversion, then
     # save crawl in log file
     # save errors in log file
-    #crawl_data_json = json.dumps(crawl_data, indent=4)
+
     crawl_data_json = json.dumps(crawl_data)
     crawler.logging.log_crawl_to_file(crawl_data_json)
     error_data_json = json.dumps(error_messages)
