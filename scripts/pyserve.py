@@ -19,9 +19,23 @@ channel.queue_declare(queue='search', durable='true') # Declare a queue
 def on_request(ch, method, properties, body):
   print ('pyserve.py received request body: ',body)
   args = json.loads(body)
+  crawl = args["searchType"]
   site = args["website"]
   dep = args["depth"]
-  results = df_crawl.df_crawl(site, dep)
+  keyword = None
+  results = None
+  
+  # Check if keyword has been provided
+  if args["keyword"] != "":
+    keyword = args["keyword"]
+    print('keyword: ', keyword)
+
+  # Run selected crawl
+  if crawl == "bfs":
+    results = bf_crawl.bf_crawl(site,dep,keyword)
+  else:
+    results = df_crawl.df_crawl(site,dep,keyword)
+
   ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
   ch.basic_ack(delivery_tag=method.delivery_tag)
     
