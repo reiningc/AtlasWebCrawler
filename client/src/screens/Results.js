@@ -49,7 +49,6 @@ class Results extends Component {
                 response.json()
             ).then(data=>(
                 // console.log(data)
-                // fix this once getting data formatted correctly from api
                 this.setState({data: data, loading: false})
                 //this.setState({loading: false})
                 )
