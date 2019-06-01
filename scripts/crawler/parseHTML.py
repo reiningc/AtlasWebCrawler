@@ -128,17 +128,22 @@ def has_ignorable_beginning_or_ending(link_URL):
 
 def contains_keyword(site_html, keyword):
     soup = BeautifulSoup(site_html, 'html.parser')
-    soup_head = soup.head.title
-    soup_body = soup.body
-
+    soup_head = None
+    soup_body = None
     # Check site title for keyword
-    for string in soup_head.stripped_strings:
-        if keyword.lower() in string.lower():
-            return True
+    if soup.head:
+        soup_head = soup.head.title
+        for string in soup_head.stripped_strings:
+            if keyword.lower() in string.lower():
+                return True
+    
     # Check html body for keyword
-    for string in soup_body.stripped_strings:
-        if keyword.lower() in string.lower():
-            return True
+    if soup.body:
+        soup_body = soup.body
+        for string in soup_body.stripped_strings:
+            if keyword.lower() in string.lower():
+                return True
+
     return False
 
 
