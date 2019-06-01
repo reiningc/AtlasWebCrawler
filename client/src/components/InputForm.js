@@ -33,36 +33,38 @@ class InputForm extends Component {
 
     callBackendAPI= () => {
 
-        
-        let param = {};
-        param["website"] = this.state.website;
-        param["searchType"] = this.state.searchType;
-        param["depth"] = this.state.depth;
-        param["keyword"] = this.state.keyword;
+        if( this.state.website != "")
+        {            
+            let param = {};
+            param["website"] = this.state.website;
+            param["searchType"] = this.state.searchType;
+            param["depth"] = this.state.depth;
+            param["keyword"] = this.state.keyword;
 
 
-        let oldCrawls = localStorage.getItem('previousCrawls')
+            let oldCrawls = localStorage.getItem('previousCrawls')
 
-        //if it is empty just add new search
-        if( oldCrawls == null)
-        {
-            let newSearch = param
-            let prevSearch = []
-            prevSearch.push(newSearch)
-            localStorage.setItem("previousCrawls", JSON.stringify(prevSearch))
+            //if it is empty just add new search
+            if( oldCrawls == null)
+            {
+                let newSearch = param
+                let prevSearch = []
+                prevSearch.push(newSearch)
+                localStorage.setItem("previousCrawls", JSON.stringify(prevSearch))
+            }
+            // if not empty add new to old
+            else {
+                // add new crawl
+                let oldCrawlList = JSON.parse(localStorage.getItem("previousCrawls"))
+                let newSearch = param
+                oldCrawlList.push(newSearch)
+                // set to local storage
+                localStorage.setItem("previousCrawls", JSON.stringify(oldCrawlList))
+            }
+
+            // go to new page
+            history.push('/results', {param})
         }
-        // if not empty add new to old
-        else {
-            // add new crawl
-            let oldCrawlList = JSON.parse(localStorage.getItem("previousCrawls"))
-            let newSearch = param
-            oldCrawlList.push(newSearch)
-            // set to local storage
-            localStorage.setItem("previousCrawls", JSON.stringify(oldCrawlList))
-        }
-
-        // go to new page
-        history.push('/results', {param})
     }
     callBackendAPIPrevSearch = () => {
         let param = this.state.apiParam
@@ -228,7 +230,14 @@ class InputForm extends Component {
                         <label >Select Maximum Number of Links to Follow: </label>
                     </div>
                     <div className="col-sm">
-                        <input type="number" required className="col-xs-4" name="depth" min="0" onChange={(e)=>this.setDepth(e)}/>
+                        <input type="number" required placeholder="0" className="col-xs-4" name="depth"  min="0" 
+                        max={
+                            this.state.searchType == "bfs" ?
+                            "3"
+                            :
+                            "10"
+                        } 
+                        onChange={(e)=>this.setDepth(e)}/>
                     </div>
                 </div>
 

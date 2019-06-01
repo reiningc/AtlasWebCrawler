@@ -48,10 +48,8 @@ class Results extends Component {
             }).then((response)=>
                 response.json()
             ).then(data=>(
-                // console.log(data)
-                // fix this once getting data formatted correctly from api
-                // this.setState({data: data, loading: false})
-                this.setState({loading: false})
+                this.setState({data: data, loading: false})
+                // this.setState({loading: false})
                 )
             ).catch(error =>
                 console.log(error)
@@ -67,13 +65,22 @@ class Results extends Component {
     
     return (
       <div>
-        <h1>Crawl Results</h1>
+          <div style={{backgroundColor: "black", paddingTop: "1%", paddingBottom: "1%"}}>
+            <h1 style={{color: "white"}}>Crawl Results</h1>
+          </div>
+
+        {/* Gives user the option to conduct a new crawl */}
+          <div style={{padding: "1% 0 0"}}>
+                <Link to='/'>
+                <button className="btn btn-primary">NEW CRAWL
+                </button>
+                
+                </Link>
+
+            </div>
 
         <div style={{paddingTop: "3%"}}>
-        {
-            // this will contain the variables needed to make the api call
-            console.log(this.props.history.location.state.param)
-        }
+
 
         {/* 
             NPM package to display the results
@@ -90,7 +97,7 @@ class Results extends Component {
             onNodeClick={(node) => {window.location.assign(node.link)}}
             />
             :
-            // add loading spinner
+            // loading spinner
             <div >
                 <img src={loading} style={{width: "50%", height: "50%"}}/>
             </div>
@@ -99,10 +106,11 @@ class Results extends Component {
         {/* 
             Legend that tells the user about the graph
         */}
-
             <div className="container">
                 <div style={{border: "1px solid black"}}>
-                    <h1>LEGEND</h1>
+                    <div style={{backgroundColor: "black"}}>
+                        <h1 style={{color: "white"}}>LEGEND</h1>
+                    </div>
                     <div>
                         <div style={{display: "inline"}}>
                             <span className="dot" style={{
@@ -135,16 +143,6 @@ class Results extends Component {
                 </div>
             </div>
             <br></br>
-
-            {/* Gives user the option to conduct a new crawl */}
-            <div>
-                <Link to='/'>
-                <button >NEW CRAWL
-                </button>
-                
-                </Link>
-
-            </div>
 
         </div>
       </div>
