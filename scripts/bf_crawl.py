@@ -16,7 +16,7 @@ import sys
 import os.path
 from collections import deque
 
-DEFAULT_CRAWL_DELAY = 0.5
+DEFAULT_CRAWL_DELAY = 0.1
 KEYWORD = None
 #if len(sys.argv) < 3:
 #    raise ValueError('Not enough arguments. Include starting URL and breadth limit.')
