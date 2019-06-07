@@ -14,6 +14,11 @@ var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
+// AWS S3 setup
+var AWS = require('aws-sdk');
+AWS.config.update({region: 'us-east-1'});
+var s3 = new AWS.S3(); // removed parameter: {apiVersion: '2006-03-01'}
+
 // create a GET route
 app.get('/', (req, res) => {
   res.render("index.html");
@@ -33,6 +38,21 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
+
+        // s3 access file
+        var params = {Bucket:process.env.S3_BUCKET, Key:msg.content, $waiter:{delay:10,maxAttemps:300}};
+        var s3_data = s3.getObject(params);
+        console.log('s3 data: ' + s3_data);
+        /*
+        s3.waitFor('objectExists',params, function(err,data){
+          if(err) console.log(err,err.stack);
+          else{
+            console.log('got it!');
+            console.log(data);
+          }
+        });
+        */
+
         res.send(msg.content);
       }, {
         noAck: true

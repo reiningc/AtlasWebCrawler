@@ -13,8 +13,9 @@
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "dependencies": {
+    "amqplib": "*",
+    "aws-sdk": "^2.470.0",
     "dotenv": "^7.0.0",
-    "express": "^4.16.4",
-    "amqplib": "*"
+    "express": "^4.16.4"
   }
 }

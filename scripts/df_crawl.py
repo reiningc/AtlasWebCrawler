@@ -27,7 +27,7 @@ KEYWORD = None
 #LIMIT = int(sys.argv[2])
 
 
-def df_crawl(starting_URL, page_limit, keyword=None):
+def df_crawl(starting_URL, page_limit, crawl_filename, keyword=None):
     if page_limit < 1:
         error_message = 'Page limit must be at least 1 for depth first crawl.'
         crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
@@ -137,7 +137,7 @@ def df_crawl(starting_URL, page_limit, keyword=None):
     # save errors in log file
 
     crawl_data_json = json.dumps(crawl_data)
-    crawler.logging.log_crawl_to_file(crawl_data_json)
+    crawler.logging.log_crawl_to_file(crawl_data_json,crawl_filename)
     error_data_json = json.dumps(error_messages)
     crawler.logging.log_error_to_file(error_data_json)
     return crawl_data_json

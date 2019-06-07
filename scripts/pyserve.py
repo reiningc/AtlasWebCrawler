@@ -5,6 +5,10 @@ from urllib.parse import urlparse
 import json
 import df_crawl
 import bf_crawl
+
+# number of latest crawl file
+crawl_num = 0
+
 # Parse CLODUAMQP_URL (fallback to localhost)
 url_str = os.environ.get('CLOUDAMQP_URL', 'amqp://guest:guest@localhost//')
 url = urlparse(url_str)
@@ -24,20 +28,21 @@ def on_request(ch, method, properties, body):
   dep = args["depth"]
   keyword = None
   results = None
-  
+  crawl_filename = f'crawl{crawl_num}.log' # file the API should look for
+  crawl_num += 1
+
   # Check if keyword has been provided
   if args["keyword"] != "":
     keyword = args["keyword"]
-    print('keyword: ', keyword)
+
+  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=crawl_filename)
+  ch.basic_ack(delivery_tag=method.delivery_tag)
 
   # Run selected crawl
   if crawl == "bfs":
     results = bf_crawl.bf_crawl(site,dep,keyword)
   else:
-    results = df_crawl.df_crawl(site,dep,keyword)
-
-  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
-  ch.basic_ack(delivery_tag=method.delivery_tag)
+    results = df_crawl.df_crawl(site,dep,crawl_filename,keyword)
     
 
 # set up subscription on the queue

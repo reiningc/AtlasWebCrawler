@@ -28,7 +28,7 @@ def log_error_to_file(message):
     obj.put(Body=message)
 
 
-def log_crawl_to_file(crawl_data):
+def log_crawl_to_file(crawl_data,crawl_filename):
     s3 = boto3.resource('s3')
-    obj = s3.Object('atlascrawlerlogs','crawl.log')
+    obj = s3.Object('atlascrawlerlogs',crawl_filename, {'ACL':'public-read'})
     obj.put(Body=crawl_data)
