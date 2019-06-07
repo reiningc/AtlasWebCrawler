@@ -40,7 +40,7 @@ app.post('/', (req, res)=>{
         console.log('reply: ' + msg.content);
 
         // s3 access file
-        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:10,maxAttempts:300}}; // 
+        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:5,maxAttempts:20}}; // 
         /*
         s3.getObject(params, function(err,data){
           if (err) console.log(err, err.stack);
@@ -55,6 +55,7 @@ app.post('/', (req, res)=>{
           else{
             console.log('got it!');
             console.log('waitFor data received: ' + data);
+            res.send(data.Body.toString('ascii'));
           }
         });
 
