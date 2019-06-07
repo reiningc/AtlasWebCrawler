@@ -40,23 +40,23 @@ app.post('/', (req, res)=>{
         console.log('reply: ' + msg.content);
 
         // s3 access file
-        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content)}; // , $waiter:{delay:10,maxAttempts:300}
-        var s3_data = s3.getObject(params, function(err,data){
+        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:10,maxAttempts:300}}; // 
+        /*
+        s3.getObject(params, function(err,data){
           if (err) console.log(err, err.stack);
           else{
             console.log(data.Body.toString('ascii'));
             res.send(data.Body.toString('ascii'));
           } 
         });
-        /*
+        */
         s3.waitFor('objectExists',params, function(err,data){
           if(err) console.log(err,err.stack);
           else{
             console.log('got it!');
-            console.log(data);
+            console.log('waitFor data received: ' + data);
           }
         });
-        */
 
         
       }, {
