@@ -17,12 +17,7 @@ var open = require('amqplib').connect(url);
 // socket.io setup
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-io.on('connection', function(socket) {
-  console.log('Client connected');
-  socket.on('disconnect', function(){
-    console.log('Client disconnected');
-  });
-});
+
 
 // AWS S3 setup
 var AWS = require('aws-sdk');
@@ -32,6 +27,13 @@ var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: 
 // create a GET route
 app.get('/', (req, res) => {
   res.render("index.html");
+});
+
+io.on('connection', function(socket) {
+  console.log('Client connected');
+  socket.on('disconnect', function(){
+    console.log('Client disconnected');
+  });
 });
 
 
