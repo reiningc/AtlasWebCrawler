@@ -28,6 +28,7 @@ def on_request(ch, method, properties, body):
   dep = args["depth"]
   keyword = None
   results = None
+  global crawl_num
   crawl_filename = f'crawl{crawl_num}.log' # file the API should look for
   crawl_num += 1
 
