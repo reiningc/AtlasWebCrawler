@@ -40,12 +40,11 @@ app.post('/', (req, res)=>{
         console.log('reply: ' + msg.content);
 
         // s3 access file
-        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content)}; // '@waiter':{delay:10,maxAttemps:300}
+        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:10,maxAttempts:300}}; 
         var s3_data = s3.getObject(params, function(err,data){
           if (err) console.log(err, err.stack);
-          else      console.log(data);
+          else      console.log(data.Body.toString('ascii'));
         });
-        console.log('s3 data: ' + s3_data.data);
         /*
         s3.waitFor('objectExists',params, function(err,data){
           if(err) console.log(err,err.stack);
