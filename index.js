@@ -14,6 +14,16 @@ var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
+// socket.io setup
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+io.on('connection', function(socket) {
+  console.log('Client connected');
+  socket.on('disconnect', function(){
+    console.log('Client disconnected');
+  });
+});
+
 // AWS S3 setup
 var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
