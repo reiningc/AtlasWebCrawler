@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { ForceGraph2D, ForceGraph3D, ForceGraphVR } from 'react-force-graph';
-import {Router, Route, Link} from 'react-router-dom'
-import loading from '../images/loading.gif'
-
+import {Router, Route, Link} from 'react-router-dom';
+import loading from '../images/loading.gif';
+import socketIOClient from 'socket.io-client';
 
 class Results extends Component {
     constructor(props){
