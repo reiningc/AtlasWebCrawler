@@ -29,13 +29,6 @@ app.get('/', (req, res) => {
   res.render("index.html");
 });
 
-io.on('connection', function(socket) {
-  console.log('Client connected');
-  socket.on('disconnect', function(){
-    console.log('Client disconnected');
-  });
-});
-
 
 app.post('/', (req, res)=>{
   var weba = JSON.stringify(req.body.website);
@@ -70,6 +63,14 @@ app.post('/', (req, res)=>{
         });
         //res.send(msg.content);
         
+        io.on('connection', function(socket) {
+          console.log('Client connected');
+          io.emit('test message',msg);
+          socket.on('disconnect', function(){
+            console.log('Client disconnected');
+          });
+        });
+
       }, {
         noAck: true
       });
