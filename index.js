@@ -25,32 +25,39 @@ AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: '2006-03-01'}
 
 // Attempt to get crawl log from S3
-function getCrawl(socket) {
+function getCrawl(socket, filename) {
   // s3 access file
-  var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content)}; // , $waiter:{delay:5,maxAttempts:20}
+  var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
   var crawlSuccess = false;
   var maxAttempts = 20;
   var attempt = 0;
   var res = null;
-  while (!crawlSuccess && attempt < maxTries) {
-    s3.getObject(params, function(err,data){
-      if (err) console.log(err, err.stack);
-      else{
-        console.log(data.Body.toString('ascii'));
-        res = data>body.toString('ascii');
-      } 
+  while (!crawlSuccess && attempt < maxAttempts) {
+    // Check for file using headObject, if no error received, then get file with getObject
+    s3.headObject(params, function(err, metadata){
+      if(!err){
+        s3.getObject(params, function(err,data){
+          if (err) console.log(err, err.stack);
+          else{
+            console.log(data.Body.toString('ascii'));
+            if (data.Body.toString('ascii'))
+            res = data.Body.toString('ascii');
+            crawlSuccess = true;
+          } 
+        });
+      }
     });
     sleep(5000);
-    socket.emit("FromAPI", 'just woke up! hello!!!'); // move this to within s3.getObject?
+    socket.emit("FromAPI", 'just woke up! hello!!!'); 
     attempt += 1;
   }
   
   return res;
 }
 
-const getCrawlAndEmit = async socket => {
+async function getCrawlAndEmit(socket,filename) {
   try {
-    const res = await getCrawl(socket);
+    const res = await getCrawl(socket,filename);
     
     /*s3.waitFor('objectExists',params, function(err,data){
       if(err) console.log(err,err.stack);
@@ -88,17 +95,16 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
-
-
-        //res.send(msg.content);
-        let interval;
+        
+        //let interval;
 
         io.on('connection', function(socket) {
           console.log('Client connected');
-          if(interval) {
-            clearInterval(interval);
-          }
-          interval = setInterval(() => getCrawlAndEmit(socket), 10000);
+          //if(interval) {
+          //  clearInterval(interval);
+          //}
+          //interval = setInterval(() => getCrawlAndEmit(socket, msg.content), 10000);
+          getCrawlAndEmit(socket,msg.content);
           socket.on('disconnect', function(){
             console.log('Client disconnected');
           });
