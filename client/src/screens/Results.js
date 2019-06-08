@@ -38,6 +38,16 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
+        fetch('/', {
+            method: 'POST',
+            // params passed in through history props
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.props.history.location.state.param)
+        }).catch(error =>
+            console.log(error)
+        )
         const { endpoint } = this.state;
         const socket = socketIOClient(endpoint);
         socket.on('Found', (data) => this.setState({data: data.json(), loading: false}));
