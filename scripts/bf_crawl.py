@@ -40,7 +40,7 @@ def add_links_to_current_level(current_level_links,links):
     for link in links:
         current_level_links.append(link)
 
-def bf_crawl(starting_URL, breadth_limit, keyword=None):
+def bf_crawl(starting_URL, breadth_limit, crawl_filename, keyword=None):
     if breadth_limit < 1:
         error_message = 'Breadth limit must be at least 1 for breadth first crawl.'
         crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
@@ -119,7 +119,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
     # save crawl in log file
 
     crawl_data_json = json.dumps(crawl_data)
-    crawler.logging.log_crawl_to_file(crawl_data_json)
+    crawler.logging.log_crawl_to_file(crawl_data_json, crawl_filename)
     error_data_json = json.dumps(error_messages)
     crawler.logging.log_error_to_file(error_data_json)
 
