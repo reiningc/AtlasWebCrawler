@@ -25,51 +25,22 @@ AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: '2006-03-01'}
 
 // Attempt to get crawl log from S3
-function getCrawl(socket, filename) {
-  // s3 access file
-  var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
-  var crawlSuccess = false;
-  var maxAttempts = 20;
-  var attempt = 0;
-  var res = null;
-  while (!crawlSuccess && attempt < maxAttempts) {
-    // Check for file using headObject, if no error received, then get file with getObject
-    s3.headObject(params, function(err, metadata){
-      if(!err){
-        s3.getObject(params, function(err,data){
-          if (err) console.log(err, err.stack);
-          else{
-            console.log(data.Body.toString('ascii'));
-            if (data.Body.toString('ascii'))
-            res = data.Body.toString('ascii');
-            crawlSuccess = true;
-          } 
-        });
-      }
-    });
-    sleep(5000);
-    socket.emit("FromAPI", 'just woke up! hello!!!'); 
-    attempt += 1;
-  }
-  
-  return res;
-}
-
 async function getCrawlAndEmit(socket,filename) {
+  var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
   try {
-    const res = await getCrawl(socket,filename);
-    
-    /*s3.waitFor('objectExists',params, function(err,data){
-      if(err) console.log(err,err.stack);
-      else{
-        console.log('got it!');
-        console.log('waitFor data received: ' + data);
-        // add s3.getObject
+    const res = await s3.getObject(params, function(err,data){
+      if (err) {
+        console.log(err, err.stack);
+        socket.emit("Not Found", '-1');
       }
+      else{
+        console.log(data.Body.toString('ascii'));
+        res = data.Body.toString('ascii');
+        socket.emit("Found", res);
+      } 
     });
-    */
-    res.send(res);
-    
+    //res.send(res);   
+
   } catch (error) {
     console.error(`Error: ${error.code}`);
   }
@@ -96,16 +67,17 @@ app.post('/', (req, res)=>{
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
         
-        //let interval;
+        let interval = 5000;
 
         io.on('connection', function(socket) {
           console.log('Client connected');
-          //if(interval) {
-          //  clearInterval(interval);
-          //}
-          //interval = setInterval(() => getCrawlAndEmit(socket, msg.content), 10000);
-          getCrawlAndEmit(socket,msg.content);
-          socket.on('disconnect', function(){
+          var foo = setInterval( () => {
+            getCrawlAndEmit(socket,msg.content);
+          }, interval);
+          socket.on('confirmed', () => {
+            clearInterval(foo);
+          });
+          socket.on('disconnect', function(){ 
             console.log('Client disconnected');
           });
         });

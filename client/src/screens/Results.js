@@ -36,33 +36,11 @@ class Results extends Component {
 
         }
     }
-    getResults = () => {
-
-        fetch('/', {
-                method: 'POST',
-                // params passed in through history props
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.props.history.location.state.param)
-            }).then((response)=>
-                {
-                    const { endpoint } = this.state;
-                    const socket = socketIOClient(endpoint);
-                    socket.on("FromAPI", data => this.setState({data: response.json, loading: false}));
-                    //response.json()
-                }
-            )/*.then(data=>(
-                this.setState({data: data, loading: false})
-                // this.setState({loading: false})
-                )
-            )*/.catch(error =>
-                console.log(error)
-            )
-    }
     
     componentDidMount = () =>{
-        this.getResults();
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+        socket.on('Found', (data) => this.setState({data: data.json(), loading: false}));
     }
 
 
