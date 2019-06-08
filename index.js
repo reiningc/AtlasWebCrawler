@@ -26,6 +26,8 @@ var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: 
 
 // Attempt to get crawl log from S3
 function getCrawl(socket) {
+  // s3 access file
+  var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content)}; // , $waiter:{delay:5,maxAttempts:20}
   var crawlSuccess = false;
   var maxAttempts = 20;
   var attempt = 0;
@@ -48,9 +50,6 @@ function getCrawl(socket) {
 
 const getCrawlAndEmit = async socket => {
   try {
-    // s3 access file
-    var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:5,maxAttempts:20}};
-    
     const res = await getCrawl(socket);
     
     /*s3.waitFor('objectExists',params, function(err,data){
