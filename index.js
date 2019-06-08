@@ -24,27 +24,46 @@ var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: '2006-03-01'}
 
+// Attempt to get crawl log from S3
+function getCrawl() {
+  var crawlSuccess = false;
+  var maxAttempts = 20;
+  var attempt = 0;
+  var res = null;
+  while (!crawlSuccess && attempt < maxTries) {
+    s3.getObject(params, function(err,data){
+      if (err) console.log(err, err.stack);
+      else{
+        console.log(data.Body.toString('ascii'));
+        res = data>body.toString('ascii');
+      } 
+    });
+    sleep(5000);
+    socket.emit("FromAPI", 'just woke up! hello!!!'); // move this to within s3.getObject?
+    attempt += 1;
+  }
+  
+  return res;
+}
+
 const getCrawlAndEmit = async socket => {
   try {
     // s3 access file
     var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:5,maxAttempts:20}};
-    const res = await sleep(5000);
+    
+    const res = await getCrawl;
     
     /*s3.waitFor('objectExists',params, function(err,data){
       if(err) console.log(err,err.stack);
       else{
         console.log('got it!');
         console.log('waitFor data received: ' + data);
-        s3.getObject(params, function(err,data){
-          if (err) console.log(err, err.stack);
-          else{
-            console.log(data.Body.toString('ascii'));
-            res.send(data.Body.toString('ascii'));
-          } 
-        });
+        // add s3.getObject
       }
-    });*/
-    socket.emit("FromAPI", 'just woke up! hello!!!'); // move this to within s3.getObject?
+    });
+    */
+    res.send(res);
+    
   } catch (error) {
     console.error(`Error: ${error.code}`);
   }
