@@ -24,6 +24,33 @@ var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: '2006-03-01'}
 
+const getCrawlAndEmit = async socket => {
+  try {
+    // s3 access file
+    var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:5,maxAttempts:20}};
+    const res = await sleep(5000);
+    
+    /*s3.waitFor('objectExists',params, function(err,data){
+      if(err) console.log(err,err.stack);
+      else{
+        console.log('got it!');
+        console.log('waitFor data received: ' + data);
+        s3.getObject(params, function(err,data){
+          if (err) console.log(err, err.stack);
+          else{
+            console.log(data.Body.toString('ascii'));
+            res.send(data.Body.toString('ascii'));
+          } 
+        });
+      }
+    });*/
+    socket.emit("FromAPI", 'just woke up! hello!!!'); // move this to within s3.getObject?
+  } catch (error) {
+    console.error(`Error: ${error.code}`);
+  }
+}
+
+
 // create a GET route
 app.get('/', (req, res) => {
   res.render("index.html");
@@ -44,28 +71,16 @@ app.post('/', (req, res)=>{
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
 
-        // s3 access file
-        var params = {Bucket:process.env.S3_BUCKET, Key:String(msg.content), $waiter:{delay:5,maxAttempts:20}}; // 
 
-        s3.waitFor('objectExists',params, function(err,data){
-          if(err) console.log(err,err.stack);
-          else{
-            console.log('got it!');
-            console.log('waitFor data received: ' + data);
-            s3.getObject(params, function(err,data){
-              if (err) console.log(err, err.stack);
-              else{
-                console.log(data.Body.toString('ascii'));
-                res.send(data.Body.toString('ascii'));
-              } 
-            });
-          }
-        });
         //res.send(msg.content);
-        
+        let interval;
+
         io.on('connection', function(socket) {
           console.log('Client connected');
-          io.emit('test message',msg);
+          if(interval) {
+            clearInterval(interval);
+          }
+          interval = setInterval(() => getCrawlAndEmit(socket), 10000);
           socket.on('disconnect', function(){
             console.log('Client disconnected');
           });
