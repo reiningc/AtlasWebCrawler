@@ -46,12 +46,17 @@ class Results extends Component {
                 },
                 body: JSON.stringify(this.props.history.location.state.param)
             }).then((response)=>
-                response.json()
-            ).then(data=>(
+                {
+                    const { endpoint } = this.state;
+                    const socket = socketIOClient(endpoint);
+                    socket.on("FromAPI", data => this.setState({data: response.json, loading: false}));
+                    //response.json()
+                }
+            )/*.then(data=>(
                 this.setState({data: data, loading: false})
                 // this.setState({loading: false})
                 )
-            ).catch(error =>
+            )*/.catch(error =>
                 console.log(error)
             )
     }
