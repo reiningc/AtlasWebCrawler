@@ -38,15 +38,7 @@ class Results extends Component {
                 }
 
         }
-        //console.log("in constructor...");
-        //socket.connect();
-        //socket.on('connect', () => {console.log('react connected to socket server!')});
-        socket.on('found', (data) => {
-            console.log('in react "found" listener. received data: '+ data);
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', '0');
-            console.log('react found listener emits "confirmed"');
-        });
+
     }
     getResults = () => {
 
@@ -69,8 +61,16 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
-
         this.getResults();
+        console.log("in componentDidMount...");
+        //socket.connect();
+        //socket.on('connect', () => {console.log('react connected to socket server!')});
+        socket.on('found', (data) => {
+            console.log('in react "found" listener. received data: '+ data);
+            this.setState({data: data.json(), loading: false});
+            socket.emit('confirmed', '0');
+            console.log('react found listener emits "confirmed"');
+        });
     }
 /*
     componentWillUnmount = () => {
