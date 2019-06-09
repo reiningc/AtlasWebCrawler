@@ -38,6 +38,11 @@ class Results extends Component {
                 }
 
         }
+        socket.on('found', (data) => {
+            console.log('react received data: '+ data);
+            this.setState({data: data.json(), loading: false});
+            socket.emit('confirmed', '0');
+        });
     }
     
     componentDidMount = () =>{
@@ -52,11 +57,6 @@ class Results extends Component {
         }).catch(error =>
             console.log(error)
         )
-        socket.on('found', (data) => {
-            console.log('react recevied found');
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', '0');
-        });
     }
 
 
