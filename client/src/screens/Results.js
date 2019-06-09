@@ -38,6 +38,8 @@ class Results extends Component {
                 }
 
         }
+        socket.connect();
+        socket.on('connect', () => {console.log('react connected to socket server')});
         socket.on('found', (data) => {
             console.log('react received data: '+ data);
             this.setState({data: data.json(), loading: false});
