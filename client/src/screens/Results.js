@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { ForceGraph2D, ForceGraph3D, ForceGraphVR } from 'react-force-graph';
 import {Router, Route, Link} from 'react-router-dom';
 import loading from '../images/loading.gif';
-import socketIOClient from 'socket.io-client';
+import socketIO from 'socket.io-client';
 
-const io = require('socket.io-client');
-const socket = io();
 
 class Results extends Component {
     constructor(props){
@@ -38,17 +36,18 @@ class Results extends Component {
                 }
 
         }
+    }
+    
+    componentDidMount = () =>{
+        console.log("in componentDidMount...");
+        const socket = socketIO(process.env.HOST);
         socket.connect();
-        socket.on('connect', () => {console.log('react connected to socket server')});
+        socket.on('connect', () => {console.log('react connected to socket server!')});
         socket.on('found', (data) => {
             console.log('react received data: '+ data);
             this.setState({data: data.json(), loading: false});
             socket.emit('confirmed', '0');
         });
-    }
-    
-    componentDidMount = () =>{
-        console.log("in componentDidMount...");
         fetch('/', {
             method: 'POST',
             // params passed in through history props
@@ -61,6 +60,10 @@ class Results extends Component {
         )
     }
 
+    componentWillUnmount = () => {
+        socket.off('connect');
+        socket.off('found');
+    }
 
   render() {
     
