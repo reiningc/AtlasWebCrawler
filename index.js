@@ -123,10 +123,12 @@ const io = require('socket.io')(server);
 io.on('connect', function(socket) {
   console.log('Client connected');
   sock = socket;
-  sock.on('confirmed', () => {
-    clearInterval(checkForLog);
-  });
+
   sock.on('disconnect', function(){ 
     console.log('Client disconnected');
+  });
+
+  sock.on('confirmed', () => {
+    clearInterval(checkForLog);
   });
 });
