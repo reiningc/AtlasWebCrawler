@@ -40,7 +40,7 @@ class Results extends Component {
     
     componentDidMount = () =>{
         console.log("in componentDidMount...");
-        const socket = socketIO(process.env.HOST);
+        const socket = socketIO(process.env.HOST+':'+process.env.PORT);
         socket.connect();
         socket.on('connect', () => {console.log('react connected to socket server!')});
         socket.on('found', (data) => {
