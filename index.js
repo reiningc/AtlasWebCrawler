@@ -34,7 +34,7 @@ async function getCrawlAndEmit(socket,filename) {
         socket.emit("notFound", '-1');
       }
       else{
-        console.log(data.Body.toString('ascii'));
+        console.log('getCrawl successfully retrieved' + filename);
         res = data.Body.toString('ascii');
         socket.emit("found", res);
       } 
@@ -69,7 +69,7 @@ app.post('/', (req, res)=>{
         
         let interval = 5000;
 
-        io.on('connection', function(socket) {
+        io.on('connect', function(socket) {
           console.log('Client connected');
           var foo = setInterval( () => {
             getCrawlAndEmit(socket,msg.content);
