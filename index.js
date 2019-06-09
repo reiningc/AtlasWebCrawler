@@ -62,7 +62,14 @@ app.post('/', (req, res)=>{
     ok = ok.then(function(ch) {
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
-        
+
+        let interval = 5000;
+        var checkForLog = setInterval( () => {
+          getCrawlAndEmit(socket,msg.content);
+        }, interval);
+        socket.on('confirmed', () => {
+          clearInterval(checkForLog);
+        });
         // res.send(msg.content);
 
       }, {
@@ -110,16 +117,11 @@ const server = app.listen(port, () => {
 // socket.io setup
 const io = require('socket.io')(server);
 
-let interval = 5000;
+
 
 io.on('connect', function(socket) {
   console.log('Client connected');
-  var checkForLog = setInterval( () => {
-    getCrawlAndEmit(socket,msg.content);
-  }, interval);
-  socket.on('confirmed', () => {
-    clearInterval(checkForLog);
-  });
+
   socket.on('disconnect', function(){ 
     console.log('Client disconnected');
   });
