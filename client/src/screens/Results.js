@@ -38,7 +38,7 @@ class Results extends Component {
                 }
 
         }
-        console.log("in constructor...");
+        //console.log("in constructor...");
         //socket.connect();
         //socket.on('connect', () => {console.log('react connected to socket server!')});
         socket.on('found', (data) => {
