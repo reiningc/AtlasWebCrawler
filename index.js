@@ -63,20 +63,7 @@ app.post('/', (req, res)=>{
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
         
-        let interval = 5000;
-
-        io.on('connect', function(socket) {
-          console.log('Client connected');
-          var foo = setInterval( () => {
-            getCrawlAndEmit(socket,msg.content);
-          }, interval);
-          socket.on('confirmed', () => {
-            clearInterval(foo);
-          });
-          socket.on('disconnect', function(){ 
-            console.log('Client disconnected');
-          });
-        });
+        // res.send(msg.content);
 
       }, {
         noAck: true
@@ -122,3 +109,18 @@ const server = app.listen(port, () => {
 
 // socket.io setup
 const io = require('socket.io')(server);
+
+let interval = 5000;
+
+io.on('connect', function(socket) {
+  console.log('Client connected');
+  var checkForLog = setInterval( () => {
+    getCrawlAndEmit(socket,msg.content);
+  }, interval);
+  socket.on('confirmed', () => {
+    clearInterval(checkForLog);
+  });
+  socket.on('disconnect', function(){ 
+    console.log('Client disconnected');
+  });
+});
