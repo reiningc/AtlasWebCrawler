@@ -4,6 +4,9 @@ import {Router, Route, Link} from 'react-router-dom';
 import loading from '../images/loading.gif';
 import socketIOClient from 'socket.io-client';
 
+const io = require('socket.io-client');
+const socket = io();
+
 class Results extends Component {
     constructor(props){
         super(props);
@@ -49,9 +52,6 @@ class Results extends Component {
         }).catch(error =>
             console.log(error)
         )
-
-        const { endpoint } = this.state;
-        const socket = socketIOClient(endpoint);
         socket.on('found', (data) => {
             console.log('react recevied found');
             this.setState({data: data.json(), loading: false});
