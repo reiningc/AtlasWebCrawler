@@ -14,10 +14,6 @@ var exchange = 'crawl'; //exchange name
 var url = process.env.CLOUDAMQP_URL || "amqp://localhost";
 var open = require('amqplib').connect(url);
 
-// socket.io setup
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
 
 // AWS S3 setup
 var AWS = require('aws-sdk');
@@ -120,7 +116,9 @@ app.use(function (err, req, res, next) {
   res.send('500');
 });
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`)
 });
 
+// socket.io setup
+const io = require('socket.io')(server);
