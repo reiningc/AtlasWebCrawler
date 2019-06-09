@@ -38,6 +38,12 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+        socket.on('found', (data) => {
+            this.setState({data: data.json(), loading: false});
+            socket.emit('confirmed', '0');
+        });
         fetch('/', {
             method: 'POST',
             // params passed in through history props
@@ -48,12 +54,7 @@ class Results extends Component {
         }).catch(error =>
             console.log(error)
         )
-        const { endpoint } = this.state;
-        const socket = socketIOClient(endpoint);
-        socket.on('found', (data) => {
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', '0');
-        });
+
     }
 
 
