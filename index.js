@@ -20,6 +20,8 @@ AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2006-03-01'}
 
 var sock = null; // socket for socket.io connection - set after connect
+var checkForLog; // will run the checkForLog interval in the post route
+
 
 // Attempt to get crawl log from S3
 async function getCrawlAndEmit(socket,filename) {
@@ -65,12 +67,10 @@ app.post('/', (req, res)=>{
         console.log('reply: ' + msg.content);
 
         let interval = 5000;
-        var checkForLog = setInterval( () => {
+        checkForLog = setInterval( () => {
           getCrawlAndEmit(sock,msg.content);
         }, interval);
-        sock.on('confirmed', () => {
-          clearInterval(checkForLog);
-        });
+
         // res.send(msg.content);
 
       }, {
@@ -123,6 +123,9 @@ const io = require('socket.io')(server);
 io.on('connect', function(socket) {
   console.log('Client connected');
   sock = socket;
+  sock.on('confirmed', () => {
+    clearInterval(checkForLog);
+  });
   sock.on('disconnect', function(){ 
     console.log('Client disconnected');
   });
