@@ -36,6 +36,7 @@ async function getCrawlAndEmit(socket,filename) {
         console.log('getCrawl successfully retrieved ' + filename + ', data: ' + data.Body.toString('ascii'));
         res = data.Body.toString('ascii');
         socket.emit("found", res);
+        console.log('server emitted "found"');
       } 
     });
     //res.send(res);   
