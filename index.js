@@ -31,12 +31,12 @@ async function getCrawlAndEmit(socket,filename) {
     const res = await s3.getObject(params, function(err,data){
       if (err) {
         console.log(err, err.stack);
-        socket.emit("Not Found", '-1');
+        socket.emit("notFound", '-1');
       }
       else{
         console.log(data.Body.toString('ascii'));
         res = data.Body.toString('ascii');
-        socket.emit("Found", res);
+        socket.emit("found", res);
       } 
     });
     //res.send(res);   
