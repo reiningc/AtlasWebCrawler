@@ -18,7 +18,7 @@ var open = require('amqplib').connect(url);
 // AWS S3 setup
 var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
-var s3 = new AWS.S3({region:"'us-east-2'"}); // removed parameter: {apiVersion: '2006-03-01'}
+var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2006-03-01'}
 
 // Attempt to get crawl log from S3
 async function getCrawlAndEmit(socket,filename) {
