@@ -37,6 +37,25 @@ class Results extends Component {
 
         }
     }
+    getResults = () => {
+
+        fetch('/', {
+                method: 'POST',
+                // params passed in through history props
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(this.props.history.location.state.param)
+            }).then((response)=>
+                response.json()
+            ).then(data=>(
+                this.setState({data: data, loading: false})
+                // this.setState({loading: false})
+                )
+            ).catch(error =>
+                console.log(error)
+            )
+    }
     
     componentDidMount = () =>{
         console.log("in componentDidMount...");
@@ -48,16 +67,7 @@ class Results extends Component {
             this.setState({data: data.json(), loading: false});
             socket.emit('confirmed', '0');
         });
-        fetch('/', {
-            method: 'POST',
-            // params passed in through history props
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(this.props.history.location.state.param)
-        }).catch(error =>
-            console.log(error)
-        )
+        this.getResults();
     }
 /*
     componentWillUnmount = () => {
