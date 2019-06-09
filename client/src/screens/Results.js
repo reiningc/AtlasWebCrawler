@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { ForceGraph2D, ForceGraph3D, ForceGraphVR } from 'react-force-graph';
 import {Router, Route, Link} from 'react-router-dom';
 import loading from '../images/loading.gif';
-import socketIO from 'socket.io-client';
+
+const io = ('socket.io-client');
+const socket = io();
 
 
 class Results extends Component {
@@ -36,6 +38,15 @@ class Results extends Component {
                 }
 
         }
+        console.log("in constructor...");
+        //socket.connect();
+        //socket.on('connect', () => {console.log('react connected to socket server!')});
+        socket.on('found', (data) => {
+            console.log('in react "found" listener. received data: '+ data);
+            this.setState({data: data.json(), loading: false});
+            socket.emit('confirmed', '0');
+            console.log('react found listener emits "confirmed"');
+        });
     }
     getResults = () => {
 
@@ -58,15 +69,7 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
-        console.log("in componentDidMount...");
-        const socket = socketIO(process.env.HOST+':'+process.env.PORT);
-        socket.connect();
-        socket.on('connect', () => {console.log('react connected to socket server!')});
-        socket.on('found', (data) => {
-            console.log('react received data: '+ data);
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', '0');
-        });
+
         this.getResults();
     }
 /*
