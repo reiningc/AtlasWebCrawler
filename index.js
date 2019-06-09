@@ -25,13 +25,13 @@ var sock = null; // socket for socket.io connection - set after connect
 async function getCrawlAndEmit(socket,filename) {
   var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
   try {
-    const res = await s3.getObject(params, function(err,data){
+    var res = await s3.getObject(params, function(err,data){
       if (err) {
         console.log(err, err.stack);
         socket.emit("notFound", '-1');
       }
       else{
-        console.log('getCrawl successfully retrieved' + filename);
+        console.log('getCrawl successfully retrieved ' + filename);
         res = data.Body.toString('ascii');
         socket.emit("found", res);
       } 
