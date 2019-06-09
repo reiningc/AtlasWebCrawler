@@ -40,10 +40,12 @@ class Results extends Component {
     componentDidMount = () =>{
         const { endpoint } = this.state;
         const socket = socketIOClient(endpoint);
-        socket.on('connect', console.log('connected: ' + socket.id));
-        socket.on('found', (data) => {
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', '0');
+        socket.on('connect', function(socket) {
+            console.log('connected: ' + socket.id);
+            socket.on('found', (data) => {
+                this.setState({data: data.json(), loading: false});
+                socket.emit('confirmed', '0');
+            });
         });
         fetch('/', {
             method: 'POST',
