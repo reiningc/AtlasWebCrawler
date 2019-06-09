@@ -38,15 +38,7 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
-        const { endpoint } = this.state;
-        const socket = socketIOClient(endpoint);
-        socket.on('connect', function(socket) {
-            console.log('connected: ' + socket.id);
-            socket.on('found', (data) => {
-                this.setState({data: data.json(), loading: false});
-                socket.emit('confirmed', '0');
-            });
-        });
+        console.log("in componentDidMount...");
         fetch('/', {
             method: 'POST',
             // params passed in through history props
@@ -58,6 +50,13 @@ class Results extends Component {
             console.log(error)
         )
 
+        const { endpoint } = this.state;
+        const socket = socketIOClient(endpoint);
+        socket.on('found', (data) => {
+            console.log('react recevied found');
+            this.setState({data: data.json(), loading: false});
+            socket.emit('confirmed', '0');
+        });
     }
 
 
