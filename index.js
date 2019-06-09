@@ -19,6 +19,8 @@ var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2006-03-01'}
 
+var sock = null; // socket for socket.io connection - set after connect
+
 // Attempt to get crawl log from S3
 async function getCrawlAndEmit(socket,filename) {
   var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
@@ -64,9 +66,9 @@ app.post('/', (req, res)=>{
 
         let interval = 5000;
         var checkForLog = setInterval( () => {
-          getCrawlAndEmit(socket,msg.content);
+          getCrawlAndEmit(sock,msg.content);
         }, interval);
-        socket.on('confirmed', () => {
+        sock.on('confirmed', () => {
           clearInterval(checkForLog);
         });
         // res.send(msg.content);
@@ -117,11 +119,11 @@ const server = app.listen(port, () => {
 const io = require('socket.io')(server);
 
 
-var socket = null; // socket for socket.io connection - set after connect
+
 io.on('connect', function(socket) {
   console.log('Client connected');
-  socket = socket;
-  socket.on('disconnect', function(){ 
+  sock = socket;
+  sock.on('disconnect', function(){ 
     console.log('Client disconnected');
   });
 });
