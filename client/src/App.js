@@ -7,8 +7,6 @@ import Test from './screens/Test';
 
 import history from './history'
 
-const io = require('socket.io-client');
-const socket = io();
 
 class App extends Component {
 
