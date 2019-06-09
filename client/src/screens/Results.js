@@ -59,12 +59,12 @@ class Results extends Component {
             console.log(error)
         )
     }
-
+/*
     componentWillUnmount = () => {
         socket.off('connect');
         socket.off('found');
     }
-
+*/
   render() {
     
     return (
