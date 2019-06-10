@@ -57,7 +57,7 @@ class Results extends Component {
     }
 
     componentDidMount = () =>{
-        socket.on("found", (crawl) => this.updateResults(crawl));
+        socket.on("found", (crawl) => this.updateState(crawl));
         this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
     }
