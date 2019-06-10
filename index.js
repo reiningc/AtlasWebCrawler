@@ -48,10 +48,10 @@ io.on("connection", function(sock) {
 });
 
 // Attempt to get crawl log from S3
-function getCrawlAndEmit(socket,filename) {
+async function getCrawlAndEmit(socket,filename) {
   var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
   try {
-    var res = s3.getObject(params, function(err,data){
+    var res = await s3.getObject(params, function(err,data){
       if (err) {
         console.log(err, err.stack);
         socket.emit("notFound", '-1');
