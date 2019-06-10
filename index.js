@@ -37,7 +37,8 @@ io.on('connection', function(sock) {
     console.log('Client disconnected');
   });
 
-  socket.on('confirmed', () => {
+  socket.on('confirmed', (data) => {
+    console.log('client confirmation received by server. data:' + data);
     clearInterval(checkForLog);
   });
 });
