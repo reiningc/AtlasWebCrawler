@@ -4,6 +4,7 @@ import socketIOClient from "socket.io-client";
 var socket;
 class Header extends Component {
   constructor() {
+    super();
     socket = socketIOClient.connect();
   }
   render() {
