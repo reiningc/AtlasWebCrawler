@@ -11,6 +11,7 @@ class Results extends Component {
             // data that will be displayed
             // data: {},
             loading: true,
+            statusOk: true,
             data: {
                 "nodes": [ 
                     { 
@@ -45,8 +46,17 @@ class Results extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.props.history.location.state.param)
-            }).then((response)=>
-                response.json()
+            })
+            .then((response)=>
+            {
+                if( !response.ok)
+                {
+                    this.setState({statusOk: false, loading: false});
+                    throw Error(response.statusText)
+                }
+                else
+                    response.json()
+            }
             ).then(data=>(
                 this.setState({data: data, loading: false})
                 // this.setState({loading: false})
@@ -87,7 +97,7 @@ class Results extends Component {
             Documentation at: https://github.com/vasturiano/react-force-graph
         */}
         {
-            !this.state.loading? 
+            (!this.state.loading && this.state.statusOk)? 
             <ForceGraph2D
             graphData={this.state.data}
             height={500}
@@ -98,10 +108,16 @@ class Results extends Component {
             />
             :
             // loading spinner
-            <div >
-                <img src={loading} style={{width: "50%", height: "50%"}}/>
+            <div>
+                {
+                    !this.state.statusOk ?
+                    <div style={{padding: "5% 5%"}}><h2>Time Out error. Please try a new search.</h2></div>
+                    :
+                    <div >
+                        <img src={loading} style={{width: "50%", height: "50%"}}/>
+                    </div>
+                }
             </div>
-            
         }
         {/* 
             Legend that tells the user about the graph
