@@ -111,7 +111,7 @@ class Results extends Component {
             <div>
                 {
                     !this.state.statusOk ?
-                    <div style={{padding: "5% 5%"}}><h2>Time Out error. Please try a new search.</h2></div>
+                    <div style={{padding: "5% 5%"}}><h2>Timeout error. Please try a new search.</h2></div>
                     :
                     <div >
                         <img src={loading} style={{width: "50%", height: "50%"}}/>
