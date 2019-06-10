@@ -100,10 +100,12 @@ app.post('/', (req, res)=>{
           getCrawlAndEmit(socket,msg.content);
         }, interval);
         */
-        var crawlData = getCrawlAndEmit(socket,msg.content);
-        socket.emit("findMe");
-        console.log("post route is sending: "+ crawlData);
-        res.send(crawlData);
+        var crawl = getCrawlAndEmit((socket,msg.content), crawlData => {
+          socket.emit("findMe");
+          console.log("post route is sending: "+ crawlData);
+          res.send(crawlData);
+        });
+
 
       }, {
         noAck: true
