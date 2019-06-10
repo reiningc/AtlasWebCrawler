@@ -11,7 +11,7 @@ import socketIOClient from "socket.io-client";
 
 class App extends Component {
 
-  componentDidMount(){
+  componentWillMount(){
     const socket = socketIOClient.connect();
     console.log("in App.js, listening for 'found'");
     socket.on('found', (data) => {
