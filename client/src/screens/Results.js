@@ -70,6 +70,7 @@ class Results extends Component {
 
     componentWillUnmount() {
         socket.off('found');
+        socket.off('findMe');
     }
 
   render() {
