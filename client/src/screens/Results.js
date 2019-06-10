@@ -77,6 +77,7 @@ class Results extends Component {
         //socket.on("found", crawl => this.updateState);
         this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
+        socket.on("found", () => {socket.emit("findMe", "client received found msg in componentDidMount")});
         socket.emit("ping");
         socket.on("pong", lat => {socket.emit("ping")});
     }
