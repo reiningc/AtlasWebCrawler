@@ -59,7 +59,7 @@ async function getCrawlAndEmit(socket,filename) {
       else{
         console.log('getCrawl successfully retrieved ' + filename + ', data: ' + data.Body.toString('ascii'));
         res = data.Body.toString('ascii');
-        socket.emit("found", res);
+        //socket.emit("found", res);
         console.log('server emitted "found"');
         socket.emit("findMe");
         console.log("getCrawl is returning: " + res);
@@ -102,6 +102,7 @@ app.post('/', (req, res)=>{
         */
         var crawlData = getCrawlAndEmit(socket,msg.content);
         socket.emit("findMe");
+        console.log("post route is sending: "+ crawlData);
         res.send(crawlData);
 
       }, {
