@@ -53,9 +53,10 @@ class Results extends Component {
     
     updateState(crawl) {
         socket.emit("confirmed", crawl);
-        this.state.data = crawl.json();
-        this.state.loading = false;
-        //this.setState({data: crawl.json(), loading: false});
+        socket.emit("findMe", "loading state: " + this.state.loading);
+        this.setState({data: crawl.json(), loading: false}, () => {
+            socket.emit("findMe", "loading state: " + this.state.loading);
+        });
     }
 
     componentDidMount = () =>{
