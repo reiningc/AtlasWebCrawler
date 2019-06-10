@@ -55,7 +55,7 @@ class Results extends Component {
     updateResults = (data) => {
         socket.emit("confirmed", data);
         this.setState({data: data.json(), loading: false}, () => {
-            console.log(this.loading);
+            console.log(this.state.loading);
         });
     };
 
