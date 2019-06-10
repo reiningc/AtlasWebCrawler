@@ -65,6 +65,7 @@ async function getCrawlAndEmit(socket,filename) {
       } 
     });
     //res.send(res);
+    console.log("getCrawl is returning: " + res);
     return res;   
 
   } catch (error) {
