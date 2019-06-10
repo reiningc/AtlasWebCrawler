@@ -31,6 +31,8 @@ io.on('connection', function(sock) {
   console.log('Client connected');
   socket = sock;
 
+  socket.emit('findMe');
+  socket.on("findMe", (loc) => {console.log("found client in " + loc)});
   socket.on('disconnect', function(){ 
     console.log('Client disconnected');
   });

@@ -35,6 +35,7 @@ class Results extends Component {
                 }
 
         }
+        socket.on("findMe", () => {socket.emit("findMe", "results constructor")});
 
     }
     getResults = () => {
@@ -59,6 +60,7 @@ class Results extends Component {
             console.log('react found listener emits "confirmed"');
           });
         this.getResults();
+        socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
     }
 
     componentWillUnmount() {
