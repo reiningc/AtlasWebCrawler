@@ -93,7 +93,7 @@ app.post('/', (req, res)=>{
           getCrawlAndEmit(socket,msg.content);
         }, interval);
 
-        // res.send(msg.content);
+        res.send(msg.content);
 
       }, {
         noAck: true
