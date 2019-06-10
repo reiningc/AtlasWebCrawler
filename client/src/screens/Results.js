@@ -73,12 +73,12 @@ class Results extends Component {
         socket.on("pong", lat => {socket.emit("ping")});
         this.getResults();
     }
-
+/*
     componentDidUpdate = () =>{
         socket.on("findMe", () => {socket.emit("findME", "results componentDidUpdate")});
         socket.emit("confirmed", this.state.loading);
     }
-
+*/
     componentWillUnmount() {
         socket.off("found");
         socket.off("findMe");
