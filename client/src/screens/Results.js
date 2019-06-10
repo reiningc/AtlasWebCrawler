@@ -46,21 +46,39 @@ class Results extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.props.history.location.state.param)
-            }).catch(error =>
+            }
+            ).then((response)=>
+            {
+                if( !response.ok)
+                {
+                    this.setState({statusOk: false, loading: false});
+                    throw Error(response.statusText)
+                }
+                else
+                    response.json()
+            }
+            ).then(data=>(
+                this.setState({data: data, loading: false})
+                // this.setState({loading: false})
+                )
+            ).catch(error =>
                 console.log(error)
             )
     }
     
+    /*
     updateState = crawl => {
         socket.on("findMe", () => {socket.emit("findME", "results updateState")});
         let data = crawl.json();
         this.setState({data: data, loading: false});
     }
-
+    */
     componentDidMount = () =>{
-        socket.on("found", crawl => this.updateState);
+        //socket.on("found", crawl => this.updateState);
         this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
+        socket.emit("ping");
+        socket.on("pong", lat => {socket.emit("ping")});
     }
 
     componentDidUpdate = () =>{
@@ -69,8 +87,9 @@ class Results extends Component {
     }
 
     componentWillUnmount() {
-        socket.off('found');
-        socket.off('findMe');
+        socket.off("found");
+        socket.off("findMe");
+        socket.off("pong");
     }
 
   render() {
