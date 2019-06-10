@@ -49,13 +49,7 @@ class Results extends Component {
             }
             ).then((response)=>
             {
-                if( !response.ok)
-                {
-                    this.setState({statusOk: false, loading: false});
-                    throw Error(response.statusText)
-                }
-                else
-                    response.json()
+                response.json()
             }
             ).then(data=>(
                 this.setState({data: data, loading: false})
