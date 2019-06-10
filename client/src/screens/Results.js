@@ -64,7 +64,7 @@ class Results extends Component {
             socket.emit('confirmed', '0');
             console.log('react found listener emits "confirmed"');
           });
-        //this.getResults();
+        this.getResults();
     }
 
     componentWillUnmount() {
