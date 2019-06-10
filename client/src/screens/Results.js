@@ -51,15 +51,13 @@ class Results extends Component {
             )
     }
     
-    updateResults(data) {
-        socket.emit("confirmed", data);
-        this.setState((state) => {
-            return {data: data.json(), loading: false};
-        });
-    };
+    updateState(crawl) {
+        socket.emit("confirmed", crawl);
+        this.setState({data: crawl.json(), loading: false});
+    }
 
     componentDidMount = () =>{
-        socket.on("found", this.updateResults);
+        socket.on("found", (crawl) => this.updateResults(crawl));
         this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
     }
