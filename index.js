@@ -100,6 +100,7 @@ app.post('/', (req, res)=>{
         }, interval);
         */
         var crawlData = getCrawlAndEmit(socket,msg.content);
+        socket.emit("findMe");
         res.send(crawlData);
 
       }, {
