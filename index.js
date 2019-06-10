@@ -62,11 +62,11 @@ async function getCrawlAndEmit(socket,filename) {
         socket.emit("found", res);
         console.log('server emitted "found"');
         socket.emit("findMe");
+        console.log("getCrawl is returning: " + res);
+        return res;  
       } 
     });
-    //res.send(res);
-    console.log("getCrawl is returning: " + res);
-    return res;   
+    //res.send(res); 
 
   } catch (error) {
     console.error(`Error: ${error.code}`);
