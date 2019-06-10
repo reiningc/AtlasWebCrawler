@@ -14,7 +14,7 @@ params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
 connection = pika.BlockingConnection(params) # Connect to CloudAMQP
 channel = connection.channel() # start a channel
 
-channel.queue_declare(queue='search', durable='true') # Declare a queue
+channel.queue_declare(queue='search', durable='false') # Declare a queue
 # create a function which is called on incoming messages
 def on_request(ch, method, properties, body):
   print ('pyserve.py received request body: ',body)
