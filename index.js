@@ -27,17 +27,17 @@ var checkForLog; // will run the checkForLog interval in the post route
 const server = http.createServer(app);
 const io = socketIO(server);
 
-io.on('connection', function(sock) {
+io.on("connection", function(sock) {
   console.log('Client connected');
   socket = sock;
 
-  socket.emit('findMe');
+  socket.emit("findMe");
   socket.on("findMe", (loc) => {console.log("found client in " + loc)});
-  socket.on('disconnect', function(){ 
+  socket.on("disconnect", function(){ 
     console.log('Client disconnected');
   });
 
-  socket.on('confirmed', (data) => {
+  socket.on("confirmed", (data) => {
     console.log('client confirmation received by server. data:' + data);
     clearInterval(checkForLog);
   });
