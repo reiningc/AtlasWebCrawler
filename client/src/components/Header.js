@@ -6,7 +6,6 @@ class Header extends Component {
   constructor() {
     super();
     socket = socketIOClient.connect();
-    socket.on("findMe", () => {socket.emit("findMe", "header")});
   }
   render() {
     return (
