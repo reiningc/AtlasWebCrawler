@@ -62,11 +62,12 @@ async function getCrawlAndEmit(socket,filename) {
         //socket.emit("found", res);
         console.log('server emitted "found"');
         socket.emit("findMe");
-        console.log("getCrawl is returning: " + res);
-        return res;  
+ 
       } 
     });
-    //res.send(res); 
+    //res.send(res);
+    await console.log("getCrawl is returning: " + res);
+    return await res;  
 
   } catch (error) {
     console.error(`Error: ${error.code}`);
@@ -106,6 +107,7 @@ app.post('/', (req, res)=>{
           console.log("post route is sending: "+ crawlData);
           res.send(crawlData);
         });
+        getCrawlAndEmit
 
 
       }, {
