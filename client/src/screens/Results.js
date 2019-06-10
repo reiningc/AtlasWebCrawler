@@ -46,13 +46,7 @@ class Results extends Component {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(this.props.history.location.state.param)
-            }).then((response)=>
-                response.json()
-            ).then(data=>(
-                this.setState({data: data, loading: false})
-                // this.setState({loading: false})
-                )
-            ).catch(error =>
+            }).catch(error =>
                 console.log(error)
             )
     }
