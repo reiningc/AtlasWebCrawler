@@ -15,4 +15,4 @@ class Header extends Component {
   }
 }
 
-export default { Header, socket };
+export { Header, socket };
