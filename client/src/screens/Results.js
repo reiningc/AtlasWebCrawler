@@ -53,9 +53,8 @@ class Results extends Component {
     }
     
     componentDidMount = () =>{
-        socket.on('found', (data) => {
-            this.setState({data: data.json(), loading: false});
-            socket.emit('confirmed', data);
+        socket.on("found", (data) => {
+            setState({data: data.json(), loading: false}, () => {socket.emit('confirmed', data);});
           });
         this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
