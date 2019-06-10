@@ -101,13 +101,12 @@ app.post('/', (req, res)=>{
           getCrawlAndEmit(socket,msg.content);
         }, interval);
         */
-        var crawl = getCrawlAndEmit(socket,msg.content);
-        crawl.then((crawlData) => {
+
+        getCrawlAndEmit((socket, msg.content), function(crawlData){
           //socket.emit("findMe");
           console.log("post route is sending: "+ crawlData);
           res.send(crawlData);
         });
-        getCrawlAndEmit
 
 
       }, {
