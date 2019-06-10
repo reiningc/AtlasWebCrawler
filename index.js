@@ -56,6 +56,7 @@ async function getCrawlAndEmit(socket,filename) {
         res = data.Body.toString('ascii');
         socket.emit("found", res);
         console.log('server emitted "found"');
+        socket.emit("findMe");
       } 
     });
     //res.send(res);   
