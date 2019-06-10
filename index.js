@@ -41,6 +41,10 @@ io.on("connection", function(sock) {
     console.log('client confirmation received by server. loading state:' + data);
     clearInterval(checkForLog);
   });
+
+  socket.on("ping", () => {
+    setTimeout(socket.emit("pong"), 5000);
+  });
 });
 
 // Attempt to get crawl log from S3
@@ -60,7 +64,8 @@ async function getCrawlAndEmit(socket,filename) {
         socket.emit("findMe");
       } 
     });
-    //res.send(res);   
+    //res.send(res);
+    return res;   
 
   } catch (error) {
     console.error(`Error: ${error.code}`);
@@ -88,12 +93,14 @@ app.post('/', (req, res)=>{
       ch.consume('amq.rabbitmq.reply-to', function(msg) {
         console.log('reply: ' + msg.content);
 
+        /*
         let interval = 5000;
         checkForLog = setInterval( () => {
           getCrawlAndEmit(socket,msg.content);
         }, interval);
-
-        res.send(msg.content);
+        */
+        var crawlData = getCrawlAndEmit(socket,msg.content);
+        res.send(crawlData);
 
       }, {
         noAck: true
