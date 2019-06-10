@@ -35,7 +35,6 @@ class Results extends Component {
                 }
 
         }
-        socket.on("findMe", () => {socket.emit("findMe", "results constructor")});
 
     }
     getResults = () => {
