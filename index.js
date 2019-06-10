@@ -38,7 +38,7 @@ io.on("connection", function(sock) {
   });
 
   socket.on("confirmed", (data) => {
-    console.log('client confirmation received by server. data:' + data);
+    console.log('client confirmation received by server. loading state:' + data);
     clearInterval(checkForLog);
   });
 });
