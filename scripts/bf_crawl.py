@@ -43,7 +43,7 @@ def add_links_to_current_level(current_level_links,links):
 def bf_crawl(starting_URL, breadth_limit, keyword=None):
     if breadth_limit < 1:
         error_message = 'Breadth limit must be at least 1 for breadth first crawl.'
-        crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
+        crawler.logging.log_error_to_file(error_message)
         return -1
 
     current_breadth_level = 0
@@ -73,7 +73,7 @@ def bf_crawl(starting_URL, breadth_limit, keyword=None):
         while len(sites_to_visit) > 0:
             if starting_URL in uncrawlable_links:
                 error_message = f'Breadth First Crawl failed. Starting URL: {starting_URL} unable to be crawled.'
-                crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
+                crawler.logging.log_error_to_file(error_message)
                 return -1
             current_URL = sites_to_visit.popleft()
             # prep URL for requesting webpage (add scheme if needed)

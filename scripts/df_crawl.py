@@ -30,7 +30,7 @@ KEYWORD = None
 def df_crawl(starting_URL, page_limit, keyword=None):
     if page_limit < 1:
         error_message = 'Page limit must be at least 1 for depth first crawl.'
-        crawler.logging.log_to_file(error_message,crawler.logging.ERROR_LOG_FILENAME)
+        crawler.logging.log_error_to_file(error_message)
         return -1
     
     # count of pages crawled
