@@ -14,7 +14,7 @@ params = pika.ConnectionParameters(host=url.hostname, virtual_host=url.path[1:],
 connection = pika.BlockingConnection(params) # Connect to CloudAMQP
 channel = connection.channel() # start a channel
 
-channel.queue_declare(queue='search', durable='true') # Declare a queue
+channel.queue_declare(queue='search', durable='false') # Declare a queue
 # create a function which is called on incoming messages
 def on_request(ch, method, properties, body):
   print ('pyserve.py received request body: ',body)
@@ -30,6 +30,9 @@ def on_request(ch, method, properties, body):
     keyword = args["keyword"]
     print('keyword: ', keyword)
 
+  # Acknowledges receipt of crawl request from queue
+  ch.basic_ack(delivery_tag=method.delivery_tag)
+
   # Run selected crawl
   if crawl == "bfs":
     results = bf_crawl.bf_crawl(site,dep,keyword)
@@ -37,7 +40,7 @@ def on_request(ch, method, properties, body):
     results = df_crawl.df_crawl(site,dep,keyword)
 
   ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
-  ch.basic_ack(delivery_tag=method.delivery_tag)
+
     
 
 # set up subscription on the queue
