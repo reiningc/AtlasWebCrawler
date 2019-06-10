@@ -19,6 +19,9 @@ var AWS = require('aws-sdk');
 AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2006-03-01'}
 
+// Socket setup
+const http = require("http");
+const socketIO = require("socket.io");
 var sock = null; // socket for socket.io connection - set after connect
 var checkForLog; // will run the checkForLog interval in the post route
 
@@ -112,14 +115,13 @@ app.use(function (err, req, res, next) {
   res.send('500');
 });
 
-const server = app.listen(port, () => {
+// socket.io setup
+const server = http.createServer(app);
+const io = socketIO(server);
+
+server.listen(port, () => {
   console.log(`Server running on port ${port}`)
 });
-
-// socket.io setup
-const io = require('socket.io')(server);
-
-
 
 io.on('connect', function(socket) {
   console.log('Client connected');
