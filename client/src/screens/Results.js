@@ -48,9 +48,7 @@ class Results extends Component {
                 body: JSON.stringify(this.props.history.location.state.param)
             }
             ).then((response)=>
-            {
                 response.json()
-            }
             ).then(data=>(
                 this.setState({data: data, loading: false})
                 // this.setState({loading: false})
@@ -69,11 +67,11 @@ class Results extends Component {
     */
     componentDidMount = () =>{
         //socket.on("found", crawl => this.updateState);
-        this.getResults();
         socket.on("findMe", () => {socket.emit("findMe", "results componentDidMount")});
         socket.on("found", () => {socket.emit("findMe", "client received found msg in componentDidMount")});
         socket.emit("ping");
         socket.on("pong", lat => {socket.emit("ping")});
+        this.getResults();
     }
 
     componentDidUpdate = () =>{
