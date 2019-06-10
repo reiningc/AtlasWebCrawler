@@ -1,6 +1,11 @@
 import React, { Component } from 'react'
+import socketIOClient from "socket.io-client";
 
+var socket;
 class Header extends Component {
+  constructor() {
+    socket = socketIOClient.connect();
+  }
   render() {
     return (
       <div>

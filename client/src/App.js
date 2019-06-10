@@ -7,13 +7,10 @@ import Test from './screens/Test';
 
 import history from './history'
 
-import socketIOClient from "socket.io-client";
 
 class App extends Component {
 
   componentWillMount(){
-    const socket = socketIOClient.connect();
-    console.log("in App.js, listening for 'found'");
     socket.on('found', (data) => {
       console.log('in react "found" listener. received data: '+ data);
       this.setState({data: data.json(), loading: false});
