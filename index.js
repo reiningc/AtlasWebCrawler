@@ -20,14 +20,14 @@ AWS.config.update({region:'us-east-2'});
 var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2006-03-01'}
 
 // Socket setup
-const http = require("http").Server(app);
-const socketIO = require("socket.io")(http, {'pingInterval':5000});
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {pingInterval:10000});
 var socket = null; // socket for socket.io connection - set after connect
 var checkForLog; // will run the checkForLog interval in the post route
 //const server = http.createServer(app);
 //const io = socketIO(server);
 
-socketIO.on("connection", function(sock) {
+io.on("connection", function(sock) {
   console.log('Client connected');
   socket = sock;
 
@@ -149,6 +149,6 @@ app.use(function (err, req, res, next) {
 });
 
 
-http.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running on port ${port}`)
 });
