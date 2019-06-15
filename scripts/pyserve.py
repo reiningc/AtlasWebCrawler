@@ -40,7 +40,7 @@ def on_request(ch, method, properties, body):
 
   # Run selected crawl
   if crawl == "bfs":
-    results = bf_crawl.bf_crawl(site,dep,keyword)
+    results = bf_crawl.bf_crawl(site,dep,crawl_filename,keyword)
   else:
     results = df_crawl.df_crawl(site,dep,crawl_filename,keyword)
   
