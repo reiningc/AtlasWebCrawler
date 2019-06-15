@@ -21,7 +21,7 @@ var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2
 
 // Socket setup
 const http = require("http");
-const socketIO = require("socket.io");
+const socketIO = require("socket.io")(http, {'pingInterval':5000});
 var socket = null; // socket for socket.io connection - set after connect
 var checkForLog; // will run the checkForLog interval in the post route
 const server = http.createServer(app);
