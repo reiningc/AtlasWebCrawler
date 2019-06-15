@@ -35,8 +35,8 @@ class Results extends Component {
                 }
 
         }
-        socket.emit("ping");
-        socket.on("pong", lat => {socket.emit("ping")});
+        socket.emit("bink");
+        socket.on("bonk", lat => {socket.emit("bink")});
 
     }
     getResults = () => {

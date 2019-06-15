@@ -44,8 +44,8 @@ io.on("connection", function(sock) {
   });
   */
 
-  socket.on("ping", () => {
-    setTimeout(socket.emit("pong"), 5000);
+  socket.on("bink", () => {
+    setTimeout(socket.emit("bonk"), 5000);
   });
 });
 
