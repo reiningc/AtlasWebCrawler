@@ -81,7 +81,7 @@ class Results extends Component {
     }
 */
     componentWillUnmount() {
-        socket.off("pong");
+        socket.off("bonk");
 //        socket.off("findMe");
 //        socket.off("pong");
     }
