@@ -36,7 +36,6 @@ def on_request(ch, method, properties, body):
   if args["keyword"] != "":
     keyword = args["keyword"]
 
-  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=crawl_filename)
   ch.basic_ack(delivery_tag=method.delivery_tag)
 
   # Run selected crawl
@@ -44,6 +43,8 @@ def on_request(ch, method, properties, body):
     results = bf_crawl.bf_crawl(site,dep,keyword)
   else:
     results = df_crawl.df_crawl(site,dep,crawl_filename,keyword)
+  
+  ch.basic_publish(exchange='', routing_key=properties.reply_to, body=results)
     
 
 # set up subscription on the queue

@@ -31,22 +31,25 @@ io.on("connection", function(sock) {
   console.log('Client connected');
   socket = sock;
 
-  socket.emit("findMe");
-  socket.on("findMe", (loc) => {console.log("found client in " + loc)});
+  //socket.emit("findMe");
+  //socket.on("findMe", (loc) => {console.log("found client in " + loc)});
   socket.on("disconnect", function(){ 
     console.log('Client disconnected');
   });
 
+  /*
   socket.on("confirmed", (data) => {
     console.log('client confirmation received by server. loading state:' + data);
     clearInterval(checkForLog);
   });
+  */
 
   socket.on("ping", () => {
     setTimeout(socket.emit("pong"), 5000);
   });
 });
 
+/*
 // Attempt to get crawl log from S3
 async function getCrawlAndEmit(socket,filename) {
   var params = {Bucket:process.env.S3_BUCKET, Key:String(filename)}; // , $waiter:{delay:5,maxAttempts:20}
@@ -60,8 +63,8 @@ async function getCrawlAndEmit(socket,filename) {
         console.log('getCrawl successfully retrieved ' + filename + ', data: ' + data.Body.toString('ascii'));
         res = data.Body.toString('ascii');
         //socket.emit("found", res);
-        console.log('server emitted "found"');
-        socket.emit("findMe");
+        //console.log('server emitted "found"');
+        //socket.emit("findMe");
  
       } 
     });
@@ -73,7 +76,7 @@ async function getCrawlAndEmit(socket,filename) {
     console.error(`Error: ${error.code}`);
   }
 }
-
+*/
 
 // create a GET route
 app.get('/', (req, res) => {
@@ -101,13 +104,14 @@ app.post('/', (req, res)=>{
           getCrawlAndEmit(socket,msg.content);
         }, interval);
         */
-
+        /*
         getCrawlAndEmit((socket, msg.content), function(crawlData){
           //socket.emit("findMe");
           console.log("post route is sending: "+ crawlData);
           res.send(crawlData);
         });
-
+        */
+        res.send(msg.content);
 
       }, {
         noAck: true
