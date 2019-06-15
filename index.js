@@ -22,14 +22,14 @@ var s3 = new AWS.S3({region:'us-east-2'}); // removed parameter: {apiVersion: '2
 // Socket setup
 const server = require("http").createServer(app);
 const io = require("socket.io")(server, {pingInterval:10000});
-var socket = null; // socket for socket.io connection - set after connect
+//var socket = null; // socket for socket.io connection - set after connect
 var checkForLog; // will run the checkForLog interval in the post route
 //const server = http.createServer(app);
 //const io = socketIO(server);
 
-io.on("connection", function(sock) {
+io.on("connection", function(socket) {
   console.log('Client connected');
-  socket = sock;
+  //socket = sock;
 
   //socket.emit("findMe");
   //socket.on("findMe", (loc) => {console.log("found client in " + loc)});
@@ -45,7 +45,8 @@ io.on("connection", function(sock) {
   */
 
   socket.on("bink", () => {
-    setTimeout(socket.emit("bonk"), 5000);
+    //setTimeout(socket.emit("bonk"), 5000);
+    socket.emit("bonk");
   });
 });
 
